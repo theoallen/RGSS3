@@ -63,6 +63,10 @@
   kamu tulis. Misalnya, jumlah inventory adalah tergantung dengan agility yang
   dimiliki oleh actor. Bisa digunakan dalam database actor dan class.
   
+  Formula ini otomatis dah dijumlahin ama nilai base inventory. Jadi semisal
+  kamu make <inv plus: 100> dan notetag formula, maka hasil yang kamu dapat :
+  ==> 100 + formulamu
+  
   Contoh :
   <inv formula>
   level * 100
