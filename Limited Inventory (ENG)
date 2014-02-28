@@ -64,6 +64,10 @@
   For example, inventory limit for an actor is based on its agility or even
   its level. It can be used inside actor or class notebox.
   
+  Inventory formula is automatically accumulated with base inventory. I mean,
+  if you're going to add <inv plus: 100> and your formula. Then, the result is
+  ==> 100 + your formula
+  
   Example :
   <inv formula>
   level * 100
