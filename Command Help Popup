@@ -32,13 +32,19 @@
 module Theo
   module CmnHelp
     
+    # ------------------------------------------------------------------------
+    # Definisikan help disini. Dengan format seperti ini.
+    # "command" => "help"
+    #
+    # Nama command harus sama besar kecil hurufnya.
+    # ------------------------------------------------------------------------
     List = {
       "Skills" => "Lookup your character's skills",
       "Continue" => "Continue the last saved game",
     }
     
-    Button   = :ALT
-    ShowTime = 120
+    Button   = :ALT   # Tombol buat aktifin help
+    ShowTime = 120    # Lama help ditampilin dalam hitungan frame (60 = 1 detik)
     
   end
 end
