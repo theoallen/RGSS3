@@ -34,7 +34,7 @@ module Theo
     
     List = {
       "Skills" => "Lookup your character's skills",
-      "Continue" => "Continue the saved game",
+      "Continue" => "Continue the last saved game",
     }
     
     Button   = :ALT
