@@ -11,6 +11,7 @@
 # Change Logs:
 # -----------------------------------------------------------------------------
 # 2014.06.25 - Ported from TSBS addons. Now can be used independently
+#            - Got rid some unused codes
 # 2014.06.23 - Multiple animation on animation guard
 # 2014.05.13 - Fixed wrong animation flash target
 # 2014.05.02 - Finished script
@@ -105,34 +106,9 @@ class Sprite_MultiAnime < Sprite_Base
   end
   
   def update
-    update_anim_position
     update_reference_sprite
     super
     dispose if !animation?
-  end
-  
-  def diff_x
-    @ref_sprite.x - x
-  end
-  
-  def diff_y
-    @ref_sprite.y - y
-  end
-  
-  def move_animation(dx, dy)
-    if @animation && @animation.position != 3
-      @ani_ox += dx
-      @ani_oy += dy
-      @ani_sprites.each do |sprite|
-        sprite.x += dx
-        sprite.y += dy
-      end
-    end
-  end
-  
-  def update_anim_position
-    return unless @anim_follow
-    move_animation(diff_x, diff_y)
   end
   
   def update_reference_sprite
