@@ -1,6 +1,6 @@
 #==============================================================================
-# TheoAllen - Resources Logger & Tester
-# Version : 1.0
+# TheoAllen - Resources Logger + Skip Missing Resource
+# Version : 2.0
 # Language : Informal Indonesian
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Contact :
@@ -23,8 +23,8 @@
   
   Sekarang kalian tidak perlu kesusahan. Script ini akan membantu kamu mencatat
   semua resource yang digunakan di game kalian. Dan jika kalian mau, script
-  ini juga membantu mencatat grafis mana aja yang ilang di dalam game kamu.
-  Yang kamu lakukan adalah tinggal melihat log yang dihasilkan oleh script
+  ini juga membantu mencatat grafis / audio mana aja yang ilang di dalam game 
+  kamu. Yang kamu lakukan adalah tinggal melihat log yang dihasilkan oleh script
   ini di folder game kamu
   
   ======================
@@ -50,15 +50,23 @@
 module Theo
   module ResLog
     
-    Activate  = true  # Aktivasi script ini? (true/false)
-    Check     = true  # Mau sekalian tes apakah resors lagi ilang? (true/false)
+    Activate  = true  # Jalanin check menyeluruh? (true/false)
+    Check     = true  # Mau sekalian tes apakah resors lagi ilang?(true/false)
     EndWait   = 120   # Berhenti sejenak sesudah ngecek dalam frame
+    
+    LogName   = "ResourceLog"
+  # Nama file untuk mencatat resource log
+    MissName  = "MissingResources"
+  # Nama file untuk mencatat resource yang hilang
+    
+    MissingSkip = true 
+  # Skip resors ilang waktu jalanin game? (true/false)
     
   end
 end
 
 #==============================================================================
-# Dibawah garis ini jangan disentuh :v
+# Di bawah garis ini jangan disentuh :v
 #==============================================================================
 
 class RPG::BGM
@@ -83,6 +91,16 @@ class RPG::SE
   def get_name
     return "Audio/SE/" + name
   end
+end
+
+class << Theo::ResLog
+  
+  def write_missing(path)
+    @cache ||= []
+    @cache << path
+    @cache.uniq!
+  end
+  
 end
 
 class Theo_Window_ResLog < Window_Base
@@ -158,6 +176,10 @@ class ResLog_Loadingset
   
 end
 
+#==============================================================================
+# RESOURCES CHECKING TEST
+#==============================================================================
+
 if Theo::ResLog::Activate && $TEST
 
 DataManager.init
@@ -175,7 +197,7 @@ graphics_res += ["Graphics/System/Iconset", "Graphics/System/Shadow",
   "Graphics/System/Balloon", "Graphics/System/GameOver", 
   "Graphics/System/Window"]
   
-# Used defined resources
+# Database resources
 graphics_res += $data_animations.compact.collect {|a| "Graphics/Animations/" + 
   a.animation1_name}
 graphics_res += $data_animations.compact.collect {|a| "Graphics/Animations/" + 
@@ -194,7 +216,7 @@ $data_tilesets.compact.each do |tiles|
   end
 end
 
-# Vechile graphics
+# Vehicle graphics
 graphics_res << "Graphics/Characters/" + $data_system.boat.character_name
 graphics_res << "Graphics/Characters/" + $data_system.ship.character_name
 graphics_res << "Graphics/Characters/" + $data_system.airship.character_name
@@ -315,15 +337,15 @@ audio_res.delete_if  {|a| !(a =~ /Audio\/.+\/.+/i) } # Delete empty name
 # Create resource log file
 #==============================================================================
 
-File.open('ResourceLog.txt', 'w') do |file|
+File.open("#{Theo::ResLog::LogName}.txt", 'w') do |file|
   file.print "-----------------------------------------------\n"
-  file.print "Last checked in : #{Time.now}\n\n"
+  file.print "Last checked at : #{Time.now}\n\n"
   
   file.print "-----------------------------------------------\n"
   file.print " *) USED GRAPHIC RESOURCES : \n"
   file.print "-----------------------------------------------\n"
   graphics_res.each do |g|
-    file.print(g + "\n")
+    file.print("~> " + g + "\n")
   end
   
   file.print "\n"
@@ -331,12 +353,12 @@ File.open('ResourceLog.txt', 'w') do |file|
   file.print " *) USED AUDIO RESOURCES : \n"
   file.print "-----------------------------------------------\n"
   audio_res.each do |a|
-    file.print(a + "\n")
+    file.print("~> " + a + "\n")
   end
 end
 
-puts "\nLog created in \"ResourceLog.txt\""
-loading_bar.text1 = "Log created in ResourceLog.txt"
+puts "\nLog created in \"#{Theo::ResLog::LogName}.txt\""
+loading_bar.text1 = "Log created in #{Theo::ResLog::LogName}.txt"
 loading_bar.text2 = "Resource listing completed!"
 
 Theo::ResLog::EndWait.times do
@@ -353,7 +375,7 @@ if Theo::ResLog::Check
 
 loading_bar.max = (graphics_res + audio_res).size
 loading_bar.current = 0
-loading_bar.text1 = "Performing check each resources ...."
+loading_bar.text1 = "Performing check each resource ...."
 missing = []
   
 #------------------------------------------------------------------------------
@@ -371,6 +393,7 @@ graphics_res.each do |g|
   rescue
     puts "Missing!"
     missing << g
+    Theo::Reslog.write_missing(g)
     loading_bar.text1 = "Total Missing Resources : #{missing.size}"
   end
 end
@@ -398,26 +421,32 @@ audio_res.each do |a|
   rescue
     puts "Missing!"
     missing << a
+    Theo::Reslog.write_missing(a)
     loading_bar.text1 = "Total Missing Resources : #{missing.size}"
   end
 end
 
+#==============================================================================
+# Final Check!
+#==============================================================================
+
 if missing.empty?
-  log = "\n\nResource check complete. You don't have any missing resources!"
+  log = "\n\nResources check complete. You don't have any missing resources!"
   puts log
   loading_bar.text2 = log.gsub(/\n+/) {""}
 else
-  File.open('MissingResources.txt', 'w') do |file|
+  File.open("#{Theo::ResLog::MissName}.txt", 'w') do |file|
     file.print "----------------------------------------------------\n"
-    file.print "Last checked in : #{Time.now}\n\n"
+    file.print "Last checked at : #{Time.now}\n\n"
     file.print "----------------------------------------------------\n"
     file.print " *) MISSING RESOURCES : "
     file.print "----------------------------------------------------\n"
     missing.each do |miss|
       file.print(miss + "\n")
     end
+    file.print "\n\n---------------------------------------------------\n"
   end
-  log = "\n\nResource check complete. Please check MissingResources.txt"
+  log="\n\nResources check complete. Please check #{Theo::ResLog::MissName}.txt"
   puts log
   loading_bar.text2 = log.gsub(/\n+/) {""}
 end
@@ -433,3 +462,61 @@ loading_bar.dispose
 end # Theo::ResLog::Check
 
 end # Theo::ResLog::Activate
+
+#==============================================================================
+# SKIP MISSING RESOURCES PART
+#==============================================================================
+
+if Theo::ResLog::MissingSkip
+
+class << Theo::ResLog
+  
+  alias theo_reslong_missing write_missing
+  def write_missing(path)
+    @cache ||= []
+    return if @cache.include?(path)
+    theo_reslog_missing(path)
+    File.open("#{Theo::ResLog::MissName}.txt", 'a') do |file|
+      text = "Missing at Runtime. Checked at - #{Time.now} : " + path + "\n"
+      file.print text
+      msgbox "Missing at Runtime : " + path
+    end
+  end
+  
+end
+
+class << Bitmap
+  
+  alias :theo_reslog_new :new
+  def new(*args)
+    begin
+      return theo_reslog_new(*args)
+    rescue
+      if args[0].is_a?(String)
+        Theo::ResLog.write_missing(args[0])
+      end
+      return theo_reslog_new(32,32)
+    end
+  end
+  
+end
+
+class << Audio
+  
+  [:bgm, :bgs, :me, :se].each do |method_name|
+    alias_method "theo_reslog_#{method_name}_play", "#{method_name}_play"
+    eval "
+    def #{method_name}_play(*args)
+      begin
+        theo_reslog_#{method_name}_play(*args)
+      rescue
+        Theo::ResLog.write_missing(args[0])
+        return
+      end
+    end
+    "
+  end
+  
+end
+  
+end # Missing Skip
