@@ -50,7 +50,7 @@
 module Theo
   module ResLog
     
-    Activate  = true  # Jalanin check menyeluruh? (true/false)
+    Activate  = false  # Jalanin check menyeluruh? (true/false)
     Check     = true  # Mau sekalian tes apakah resors lagi ilang?(true/false)
     EndWait   = 120   # Berhenti sejenak sesudah ngecek dalam frame
     
@@ -471,7 +471,7 @@ if Theo::ResLog::MissingSkip
 
 class << Theo::ResLog
   
-  alias theo_reslong_missing write_missing
+  alias theo_reslog_missing write_missing
   def write_missing(path)
     @cache ||= []
     return if @cache.include?(path)
