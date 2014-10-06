@@ -50,7 +50,7 @@
 module Theo
   module ResLog
     
-    Activate  = false  # Jalanin check menyeluruh? (true/false)
+    Activate  = true  # Jalanin check menyeluruh? (true/false)
     Check     = true  # Mau sekalian tes apakah resors lagi ilang?(true/false)
     EndWait   = 120   # Berhenti sejenak sesudah ngecek dalam frame
     
