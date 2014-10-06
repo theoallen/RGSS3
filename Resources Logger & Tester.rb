@@ -52,6 +52,7 @@ module Theo
     
     Activate  = true  # Aktivasi script ini? (true/false)
     Check     = true  # Mau sekalian tes apakah resors lagi ilang? (true/false)
+    EndWait   = 120   # Berhenti sejenak sesudah ngecek dalam frame
     
   end
 end
@@ -84,9 +85,84 @@ class RPG::SE
   end
 end
 
+class Theo_Window_ResLog < Window_Base
+  
+  def initialize(y)
+    super(0, y, Graphics.width, fitting_height(1))
+    self.opacity = 0
+  end
+  
+  def set_text(text)
+    contents.clear
+    draw_text(contents.rect, text, 1)
+  end
+  
+end
+
+class ResLog_Loadingset
+  attr_reader :current
+  def initialize(max = 1)
+    @max = [max, 1].max
+    @current = 0
+    create_all_instances
+  end
+  
+  def create_all_instances
+    # CREATE SPRITE
+    @sprite_bar = Sprite.new
+    @sprite_bar.bitmap = Bitmap.new(Graphics.width - 75 ,24)
+    @sprite_bar.x = (Graphics.width - @sprite_bar.bitmap.width)/2
+    @sprite_bar.y = (Graphics.height - @sprite_bar.bitmap.height)/2
+    
+    @window1 = Theo_Window_ResLog.new(Graphics.height/2 - 64)
+    @window2 = Theo_Window_ResLog.new(@sprite_bar.y + @sprite_bar.height)
+    @window3 = Theo_Window_ResLog.new(Graphics.height/2 - 24)
+    
+    rect = @sprite_bar.bitmap.rect
+    col1 = @window1.hp_gauge_color1
+    col2 = @window1.hp_gauge_color2
+    @sprite_bar.bitmap.gradient_fill_rect(rect, col1, col2)
+    refresh_rate
+  end
+  
+  def max=(max)
+    @max = max
+    refresh_rate
+  end
+  
+  def current=(current)
+    @current = current
+    refresh_rate
+  end
+  
+  def refresh_rate
+    rate = @current / @max.to_f
+    @sprite_bar.src_rect.width = @sprite_bar.bitmap.width * rate
+    @window3.set_text("#{(rate * 100).to_i}%")
+  end
+  
+  def text1=(text)
+    @window1.set_text(text)
+  end
+  
+  def text2=(text)
+    @window2.set_text(text)
+  end
+  
+  def dispose
+    @sprite_bar.dispose
+    @window1.dispose
+    @window2.dispose
+    @window3.dispose
+  end
+  
+end
+
 if Theo::ResLog::Activate && $TEST
 
 DataManager.init
+loading_bar = ResLog_Loadingset.new
+
 graphics_res = []  # Record graphics resources
 audio_res = []     # Record audio resources
 
@@ -140,12 +216,45 @@ audio_res << $data_system.gameover_me.get_name
 audio_res += $data_system.sounds.compact.collect {|s| s.get_name }
 
 #==============================================================================
-# Record all used graphics & audio from maps
+# Record all used graphics & audio from common events
 #==============================================================================
 
+$data_common_events.compact.each do |comev|
+  comev.list.each do |list|
+    case list.code
+    when 101 # Show Text
+      graphics_res << "Graphics/Faces/" + list.parameters[0]
+    when 231 # Show Pic
+      graphics_res << "Graphics/Pictures/" + list.parameters[1]
+    when 132, 133, 241, 245, 249, 250 # Audio Related event
+      audio_res << list.parameters[0].get_name
+    when 205 # Set Move route
+      list.parameters[1].list.each do |li|
+        if li.code == 41 # Change character graphic
+          graphics_res << "Graphics/Characters/" + li.parameters[0]
+        elsif li.code == 44 # Play SE
+          audio_res << li.parameters[0].get_name
+        end
+      end
+    end
+  end
+end
+
+#==============================================================================
+# Record all used graphics & audio from maps
+#==============================================================================
+unless $BTEST
+
+loading_bar.max = $data_mapinfos.size
+loading_bar.text1 = "Retriving data from maps ...."
+
 $data_mapinfos.each do |map_id, map|
-  map = load_data(sprintf("Data/Map%03d.rvdata2", map_id))
-  puts "Loading map ID #{map_id}"
+  name = sprintf("Data/Map%03d.rvdata2", map_id)
+  map = load_data(name)
+  log = "Loading map ID : #{sprintf("Data/Map%03d.rvdata2", map_id)}" 
+  puts log
+  loading_bar.text2 = log
+  loading_bar.current += 1
   Graphics.update
   
   # Record used graphics in map
@@ -187,8 +296,9 @@ $data_mapinfos.each do |map_id, map|
     end
   end
   
-end
+end 
 
+end
 #==============================================================================
 # Data cleaning process
 #==============================================================================
@@ -226,19 +336,34 @@ File.open('ResourceLog.txt', 'w') do |file|
 end
 
 puts "\nLog created in \"ResourceLog.txt\""
+loading_bar.text1 = "Log created in ResourceLog.txt"
+loading_bar.text2 = "Resource listing completed!"
+
+Theo::ResLog::EndWait.times do
+  Graphics.update
+  Input.update
+  break if Input.trigger?(:C) || Input.trigger?(:B)
+end
 
 #==============================================================================
 # Perform checking each resource
 #==============================================================================
 
 if Theo::ResLog::Check
+
+loading_bar.max = (graphics_res + audio_res).size
+loading_bar.current = 0
+loading_bar.text1 = "Performing check each resources ...."
 missing = []
   
 #------------------------------------------------------------------------------
 # Graphic resources check
 #------------------------------------------------------------------------------
 graphics_res.each do |g|
-  puts "Checking : #{g}"
+  log = "Checking : #{g}"
+  puts log
+  loading_bar.current += 1
+  loading_bar.text2 = log
   Graphics.update
   begin
     b = Bitmap.new(g)
@@ -246,6 +371,7 @@ graphics_res.each do |g|
   rescue
     puts "Missing!"
     missing << g
+    loading_bar.text1 = "Total Missing Resources : #{missing.size}"
   end
 end
 
@@ -253,7 +379,10 @@ end
 # Audio resources check
 #------------------------------------------------------------------------------
 audio_res.each do |a|
-  puts "Checking : #{a}"
+  log = "Checking : #{a}"
+  puts log
+  loading_bar.current += 1
+  loading_bar.text2 = log
   Graphics.update
   begin
     case a
@@ -269,11 +398,14 @@ audio_res.each do |a|
   rescue
     puts "Missing!"
     missing << a
+    loading_bar.text1 = "Total Missing Resources : #{missing.size}"
   end
 end
 
 if missing.empty?
-  puts "\n\nResource check complete. You don't have any missing resources!"
+  log = "\n\nResource check complete. You don't have any missing resources!"
+  puts log
+  loading_bar.text2 = log.gsub(/\n+/) {""}
 else
   File.open('MissingResources.txt', 'w') do |file|
     file.print "----------------------------------------------------\n"
@@ -285,8 +417,18 @@ else
       file.print(miss + "\n")
     end
   end
-  puts "\n\nResource check complete. Please check MissingResources.txt"
+  log = "\n\nResource check complete. Please check MissingResources.txt"
+  puts log
+  loading_bar.text2 = log.gsub(/\n+/) {""}
 end
+
+Theo::ResLog::EndWait.times do
+  Graphics.update
+  Input.update
+  break if Input.trigger?(:C) || Input.trigger?(:B)
+end
+
+loading_bar.dispose
 
 end # Theo::ResLog::Check
 
