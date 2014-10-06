@@ -177,6 +177,8 @@ $data_mapinfos.each do |map_id, map|
           list.parameters[1].list.each do |li|
             if li.code == 41 # Change character graphic
               graphics_res << "Graphics/Characters/" + li.parameters[0]
+            elsif li.code == 44 # Play SE
+              audio_res << li.parameters[0].get_name
             end
           end
         end
