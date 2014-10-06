@@ -158,10 +158,10 @@ $data_mapinfos.each do |map_id, map|
   audio_res << map.bgs.get_name
   
   # Load all events
-  map.events.each do |evid, event|
+  map.events.each_value do |event|
     
     # Load all pages
-    event.pages.each_with_index do |page, page_index|
+    event.pages.each do |page|
       graphics_res << "Graphics/Characters/" + page.graphic.character_name
       
       # Load all event list
