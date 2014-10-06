@@ -107,7 +107,7 @@ end
 class Game_System
   attr_writer :battle_trans
   def battle_trans
-    @battletrans ||= Theo::BattleTrans_Init
+    @battle_trans ||= Theo::BattleTrans_Init
   end
 end
 
