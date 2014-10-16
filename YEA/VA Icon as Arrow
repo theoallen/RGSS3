@@ -1,0 +1,13 @@
+class Window_VictoryLevelUp
+  IconIndex = 140
+  
+  def draw_arrows
+    dx = contents.width / 2 - 12
+    dy = 0
+    for i in 0..8
+      draw_icon(IconIndex, dx, dy)
+      dy += line_height
+    end
+  end
+  
+end
