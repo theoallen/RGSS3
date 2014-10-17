@@ -1,6 +1,6 @@
 # =============================================================================
 # TheoAllen - Event Notification
-# Version : 2.0
+# Version : 2.0b
 # Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
 # (This script documentation is written in informal indonesian language)
 # -----------------------------------------------------------------------------
@@ -11,6 +11,7 @@
 # =============================================================================
 # CHANGE LOGS:
 # -----------------------------------------------------------------------------
+# 2014.09.** - Compatibility with latest basic module
 # 2013.10.14 - Rewrite Script (v2.0)
 #            - Support multiple notification show
 #            - Add notification SE
