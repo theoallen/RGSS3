@@ -34,6 +34,12 @@
   line kedua
   </desc>
   
+  Khusus untuk skill use message
+  Gunakan tag seperti ini
+  
+  <use1: Teks alternatif>
+  <use2: Teks alternatif>
+  
   Terms of use :
   Credit gw, TheoAllen. Kalo semisal u bisa ngedit2 script gw trus jadi lebih
   keren, terserah. Ane bebasin. Asal ngga ngeklaim aja. Kalo semisal mau
