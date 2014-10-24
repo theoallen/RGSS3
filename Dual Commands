@@ -9,7 +9,7 @@
 # *> http://www.rpgmakervxace.net
 # *> http://www.theolized.com
 #==============================================================================
-($imported || = {})[:Theo_DualCMD] = true
+($imported ||= {})[:Theo_DualCMD] = true
 #==============================================================================
 %Q{
 
@@ -38,16 +38,20 @@
 # Konfigurasi
 #==============================================================================
 module Theo
+  
+  # Switch yang akan kamu gunakan untuk mengganti command (ON = diganti)
   Dual_Switch = 15
   
+  # List nama command yang akan kamu ganti
   Dual_Commands = {
-    "Option"      => "Opsi",
+  
     "Special"     => "Spesial",
     "Magic"       => "Sihir",
     "Buy"         => "Beli",
     "Cancel"      => "Keluar",
     "To title"    => "Ke Judul",
     "Load Game"   => "Lanjutkan",
+    
   }
   
 end
@@ -57,7 +61,7 @@ end
 class Window_Command
   alias ed_dualcom_add_command add_command
   def add_command(name, symbol, enabled = true, ext = nil)
-    name = Theo::Dual_Commands[name] if $game_switches[Dual_Switch] && 
+    name = Theo::Dual_Commands[name] if $game_switches[Theo::Dual_Switch] && 
       Theo::Dual_Commands[name]
     ed_dualcom_add_command(name, symbol, enabled, ext)
   end
