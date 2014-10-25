@@ -209,17 +209,12 @@ class Game_System
   alias theo_storyjournal_init initialize
   def initialize
     theo_storyjournal_init
-    @journal_number = 0
+    @journal_number = 1
     @journals = {}
   end
   
   def journal_keys
     @journals[@journal_number] ||= []
-  end
-  
-  def journal_keys=(key)
-    @journals[@journal_number] ||= [] 
-    @journals[@journal_number] = key
   end
   
 end
