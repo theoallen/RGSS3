@@ -27,7 +27,7 @@
   ======================
   || Cara penggunaan ||
   ----------------------
-  Pasang script ini di bawah material namun di atas main.
+  Pasang script ini di bawah YEA system option
   
   Script ini akan membuat file yang bernama 'OptionData.rvdata2' di folder
   game kamu. Jika kamu ingin mereset system option, tinggal delete saja file
