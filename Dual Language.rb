@@ -21,7 +21,7 @@
   || Perkenalan ||
   -----------------
   Pernah kepikiran untuk membuat game RM jadi dual language? Namun jika kamu
-  make script, maka itu bakal kebanyakan. Lalu bagaimana solusinya? Script
+  make switch, maka itu bakal kebanyakan. Lalu bagaimana solusinya? Script
   ini bisa membantumu
   
   Dianjurkan memakai script ini jika project kalian sudah benar-benar fix dan
