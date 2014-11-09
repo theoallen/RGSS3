@@ -35,7 +35,7 @@ def backtrace
   array = caller.collect do |line|
     if line =~ regex
       name = $RGSS_SCRIPTS[$1.to_i][1]
-      line.gsub(/\{\d+\}/) {"#{name} --- "}
+      line.gsub(/\{\d+\}\:/) {"#{name} --- Line: "}
     else
       line
     end
