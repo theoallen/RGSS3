@@ -167,6 +167,7 @@ end
 # - Your laptop / PC temperature 
 # - How much power do you give for your CPU
 # - Multi tasking
+# - Someone's script
 #
 # I once used RM in old computer. When I switched to more advanced laptop, I 
 # saw that 60 FPS is really smooth.
@@ -182,6 +183,10 @@ end
 #
 # If you have many programs running at same time, it may cause a little lag in
 # RPG Maker games. Something like the screen won't be updated for a while.
+#
+# Some scripts can affect performance if it's not done right. This antilag
+# script is tested using default script without additional scripts which 
+# directly affect something on map.
 #
 #-------------------------------------------------------------------------------
 # *) Below this line is sacred place to visit. Unless you have enough skill,
@@ -327,11 +332,11 @@ class Game_Map
   def update_events
     last_events = (@cached_events.dup rescue @events.values)
     select_on_screen_events
+    events = @cached_events | @keep_update_events | @forced_update_events
     if Theo::AntiLag::Dispose_Sprite
-      offscreen_events = last_events - @cached_events
+      offscreen_events = last_events - events
       offscreen_events.each {|event| event.delete_sprite}
     end
-    events = @cached_events | @keep_update_events | @forced_update_events
     events.each {|event| event.update}
     @common_events.each {|event| event.update}
   end
