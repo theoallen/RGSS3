@@ -537,8 +537,6 @@ class Sprite_Character
   alias theo_antilag_init initialize
   def initialize(viewport, character = nil)
     character.sprite = self if character
-    @sx = character.screen_x
-    @sy = character.screen_y
     theo_antilag_init(viewport, character)
   end
   #-----------------------------------------------------------------------------
@@ -546,8 +544,6 @@ class Sprite_Character
   #-----------------------------------------------------------------------------
   alias theo_antilag_update update
   def update
-    last_x = @sx
-    last_y = @sy
     @sx = @character.screen_x
     @sy = @character.screen_y
     if Theo::AntiLag::Optimize_Sprite && !need_update?
