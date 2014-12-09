@@ -20,10 +20,10 @@
   --------------------------------------
   *) Introduction :
   --------------------------------------
-  This script simply enable you to use encounter features like surprise and
-  preemptive in battle processing through battle processing event. You can make
-  your evented encounter same as map encounter, force surprise attack, or
-  preemptive attack.
+  This script simply enable you to use random encounter features like surprise 
+  and preemptive in battle processing through battle processing event. You can 
+  make your evented encounter same as random encounter, force surprise attack, 
+  or force preemptive attack.
   
   --------------------------------------
   *) How to use :
