@@ -1,6 +1,6 @@
 #===============================================================================
 # TheoAllen - Insane Anti Lag
-# Version : 1.0
+# Version : 1.0b
 # Language : English
 #-------------------------------------------------------------------------------
 # With help from following people :
@@ -18,6 +18,7 @@
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2015.01.01 - Avoid unexpected error 'undefined method spriteset for scene'
 # 2014.12.05 - Finished
 #===============================================================================
 =begin
@@ -439,7 +440,9 @@ class Game_Event
   alias theo_antilag_update update
   def update
     if (sprite && sprite.disposed?) || sprite.nil?
-      SceneManager.scene.spriteset.add_sprite(self)
+      spriteset = SceneManager.scene.spriteset
+      return unless spriteset
+      spriteset.add_sprite(self)
     end
     theo_antilag_update
     if Theo::AntiLag::Optimize_XY && (@last_x != @x || @last_y != @y)
@@ -636,9 +639,9 @@ class Spriteset_Map
 end
 
 #===============================================================================
-# ** Scene_Map
+# ** Scene_Base
 #===============================================================================
 
-class Scene_Map
+class Scene_Base
   attr_reader :spriteset
 end
