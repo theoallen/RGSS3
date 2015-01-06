@@ -1,7 +1,7 @@
 #==============================================================================
 # TheoAllen - Core Custom Attributes
 # Version : 0.1
-# Language : English
+# Language : -
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Contact :
 #------------------------------------------------------------------------------
@@ -77,7 +77,8 @@ module Theo
   List[:str] = {
     :name   => 'Strength',
     :desc   => 'Increase Max HP (+3/point) and Attack (+1/point)',
-    :param  => {:mhp => 3, :atk => 1},
+    :param  => {:mhp => 100, :atk => 1},
+    :init   => 10,
   }
     
   List[:int] = {
@@ -136,6 +137,17 @@ class RPG::Class
 end
 
 class Game_Battler
+  
+  alias theo_custom_attr_init initialize
+  def initialize
+    @param_attr = {}
+    theo_custom_attr_init
+  end
+  
+end
+
+class Game_Actor
+  
   ParamSymbols = {
   
   # Basic Parameters
@@ -185,12 +197,6 @@ class Game_Battler
     9 => [:mhp, :exr, :trg],
   }
   
-  alias theo_custom_attr_init initialize
-  def initialize
-    @param_attr = {}
-    theo_custom_attr_init
-  end
-  
   #-----------------------------------------------------------------------------
   # Dynamically add new attributes
   #-----------------------------------------------------------------------------
@@ -226,10 +232,6 @@ class Game_Battler
     @param_attr[symbol] ||= 0
     @param_attr[symbol] += value
   end
-  
-end
-
-class Game_Actor
   
   alias theo_custom_attr_setup setup
   def setup(actor_id)
