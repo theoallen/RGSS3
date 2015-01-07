@@ -13,6 +13,8 @@
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2015.01.07 - Added A* Pathfinding
+#            - Map loop support pathfinding
 # 2015.01.06 - Finished
 # 2014.05.08 - Initial prototype
 #===============================================================================
@@ -65,13 +67,10 @@
   =================================
   *) Catatan penting :
   ---------------------------------
-  Metode pathfinding ini menggunakan metode breadth-first seach. Dimana jika
-  peta semakin besar / tile yang passable semakin banyak, dan jarak dari
-  karakter ke target semakin jauh, semakin memakan waktu juga
-  
-  Chase player masih tergolong experimental. Penggunakan chase player tidak 
-  dianjurkan pada map yang besar karena akan menimbulkan sedikit lag setiap 
-  detiknya. Dan tidak menutup kemungkinan terdapat bug-bug lainnya.
+  Chase player masih tergolong experimental. Tidak menutup kemungkinan terdapat 
+  bug-bug bertebaran. Pathfinding ini tidak termasuk diagonal movement. Hanya
+  support untuk empat arah saja. Dan kemungkinan juga ngga bisa dipake buat
+  pixel movement.
   
   =================================
   *) Terms of use :
@@ -80,11 +79,77 @@
   keren, terserah. Ane bebasin. Asal ngga ngeklaim aja. Kalo semisal mau
   dipake buat komersil, jangan lupa, gw dibagi gratisannya.  
 
-
 =end
 #===============================================================================
 # Mulai dari sini ke bawah jangan berani sentuh apapun
 #===============================================================================
+
+#===============================================================================
+# ** Pathfinding Queue
+#===============================================================================
+
+class Pathfinding_Queue
+  #----------------------------------------------------------------------------
+  # * Initialize
+  #----------------------------------------------------------------------------
+  def initialize(tx, ty, first_node)
+    @astar = !$game_map.any_loop?
+    @tx = tx
+    @ty = ty
+    clear
+    @front_queue.push(first_node)
+    @range_cache = {}
+  end
+  
+  #----------------------------------------------------------------------------
+  # * Range
+  #----------------------------------------------------------------------------
+  def range(node)
+    unless @range_cache[node]
+      range_x = node.x - @tx
+      range_y = node.y - @ty
+      @range_cache[node] = Math.sqrt((range_x**2) + (range_y**2))
+    end
+    return @range_cache[node]
+  end
+  
+  #----------------------------------------------------------------------------
+  # * Push
+  #----------------------------------------------------------------------------
+  def push(new_node, parent_node)
+    if @astar && range(new_node) < range(parent_node)
+      @front_queue.push(new_node)
+      @front_queue.sort! {|a,b| range(a) <=> range(b)}
+    else
+      @back_queue.push(new_node)
+    end
+  end
+  
+  #----------------------------------------------------------------------------
+  # * Shift
+  #----------------------------------------------------------------------------
+  def shift
+    result = @front_queue.shift
+    return result if result
+    return @back_queue.shift
+  end
+  
+  #----------------------------------------------------------------------------
+  # * Empty
+  #----------------------------------------------------------------------------
+  def empty?
+    @front_queue.empty? && @back_queue.empty?
+  end
+  
+  #----------------------------------------------------------------------------
+  # * Clear
+  #----------------------------------------------------------------------------
+  def clear
+    @front_queue = []
+    @back_queue = []
+  end
+  
+end
 
 #===============================================================================
 # ** MapNode
@@ -94,12 +159,12 @@ class MapNode
   #----------------------------------------------------------------------------
   # * Public attributes
   #----------------------------------------------------------------------------
-  attr_accessor :expanded 
   attr_accessor :parent   
   attr_accessor :visited
-  attr_accessor :x
-  attr_accessor :y
+  attr_reader :expanded 
   attr_reader :nodes    
+  attr_reader :x
+  attr_reader :y
   
   #----------------------------------------------------------------------------
   # * Initialize
@@ -117,9 +182,9 @@ class MapNode
   def expand_node(mapnodes, char)
     dir = [2,4,6,8]
     dir.each do |d|
-      next unless char.pathfinding_passable?(x, y, d)
-      xpos = $game_map.round_x_with_direction(x, d)
-      ypos = $game_map.round_y_with_direction(y, d)
+      next unless char.pathfinding_passable?(@x, @y, d)
+      xpos = $game_map.round_x_with_direction(@x, d)
+      ypos = $game_map.round_y_with_direction(@y, d)
       key = [xpos, ypos]
       next_node = mapnodes[key]
       if next_node.nil?
@@ -144,7 +209,17 @@ class MapNode
 end
 
 #===============================================================================
-# ** MapNode
+# ** Game_Map
+#===============================================================================
+
+class Game_Map
+  def any_loop?
+    loop_horizontal? || loop_vertical?
+  end
+end
+
+#===============================================================================
+# ** Game_Character
 #===============================================================================
 
 class Game_Character
@@ -154,6 +229,7 @@ class Game_Character
   #----------------------------------------------------------------------------
   def find_path(tx, ty, clear = false)
     return if x == tx && y == ty
+    return unless [2,4,6,8].any? {|dir| passable?(tx, ty, dir)}
     
     # Initialize
     @move_code = nil
@@ -166,8 +242,7 @@ class Game_Character
     first_node.expand_node(@mapnodes, self)
     first_node.visited = true
     @mapnodes[[self.x, self.y]] = first_node
-    @queue = []
-    @queue.push(first_node)
+    @queue = Pathfinding_Queue.new(tx, ty, first_node)
     
     # breadth first seach iteration
     until @queue.empty?
@@ -213,7 +288,7 @@ class Game_Character
       end
       next_node.expand_node(@mapnodes, self) unless next_node.expanded
       next_node.visited = true
-      @queue.push(next_node)
+      @queue.push(next_node, node)
     end
   end
   
@@ -276,7 +351,7 @@ class Game_Character
 end
 
 #===============================================================================
-# ** MapNode
+# ** Game_Event
 #===============================================================================
 
 class Game_Event
