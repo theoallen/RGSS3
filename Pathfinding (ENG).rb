@@ -24,7 +24,7 @@
   =================================
   *) Introduction :
   ---------------------------------
-  This script simply for determine the shortest part from started from a
+  This script simply for determine the shortest path from started from a
   character position to target coodrinate.
   
   =================================
