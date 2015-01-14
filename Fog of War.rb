@@ -1,15 +1,34 @@
 #===============================================================================
 # TheoAllen - Fog of War
 # Requested by : Zero0018
+# Last edited : 15.01.2015
 #-------------------------------------------------------------------------------
 # How to use :
 # Put the script below materials but above main
 # No external resource is required
 #
+#------------------------------------------------------------------------------
+# ** MAP NOTETAG :
+#------------------------------------------------------------------------------
 # To show fog in map, simply put <fog> in map note
 # To hide fog in map, simply put <no fog> in map note
 #
 # Set the default of showing fog in configuration
+#
+#------------------------------------------------------------------------------
+# ** SCRIPT CALL :
+#------------------------------------------------------------------------------
+#
+# $game_map.reveal_tiles(x, y)
+# $game_map.reveal_tiles(x, y, distance)
+# Will reveal tiles in x,y within the distance. If distance is ommited, it will
+# be same as the VisiRange in script setting
+#
+# $game_map.events[event_id].reveal_tiles
+# $game_map.events[event_id].reveal_tiles(distance
+# Will reveal tiles from the event location within the distance. If distance is
+# ommited, it will be same as the VisiRange in script setting
+#
 #-------------------------------------------------------------------------------
 # Configuration
 #===============================================================================
@@ -18,7 +37,7 @@ module Theo
   VisiRange   = 4
 # Visibility range of the character. Larger value, longer distance
 
-  FogOpacity  = 128
+  FogOpacity  = 255
 # Fog opacity. Set 255 for full opacity.
 
   DefaultFog  = true
@@ -98,7 +117,7 @@ class Fog_of_War < Plane
       x = pos.x * 32
       y = pos.y * 32
       bitmap.clear_rect(x,y,32,32)
-    end
+    end unless disposed?
   end
   
 end
@@ -197,28 +216,22 @@ class Game_Map
     return false if @map.note[/<fog>/i]
     return !Theo::DefaultFog
   end
-  
-end
-
-#===============================================================================
-# ** Game_Player
-#===============================================================================
-
-class Game_Player
   #----------------------------------------------------------------------------
   # * Reveal tiles
   #----------------------------------------------------------------------------
-  def reveal_tiles(distance = Theo::VisiRange)
-    return if $game_map.no_fog?
+  def reveal_tiles(x, y, distance = Theo::VisiRange, reveal = true)
+    return if no_fog?
     # Initialize
     @revealed_nodes = {}
     @max_distance = distance - 1
+    @init_x = x
+    @init_y = y
     
     # Make first node to check
-    first_node = Revealed_Node.new(self.x, self.y)
+    first_node = Revealed_Node.new(x, y)
     first_node.expand_node(@revealed_nodes, self)
     first_node.visited = true
-    @revealed_nodes[[self.x, self.y]] = first_node
+    @revealed_nodes[[x, y]] = first_node
     @reveal_queue = []
     @reveal_queue.push(first_node)
     
@@ -253,12 +266,30 @@ class Game_Player
   # * Get distance
   #----------------------------------------------------------------------------
   def get_distance(node)
-    range_x = node.x - self.x
-    range_y = node.y - self.y
+    range_x = node.x - @init_x
+    range_y = node.y - @init_y
     result =  Math.sqrt((range_x**2) + (range_y**2))
     return result
   end
   
+end
+#===============================================================================
+# ** Game_Character
+#===============================================================================
+class Game_Character
+  #----------------------------------------------------------------------------
+  # * Reveal tiles
+  #----------------------------------------------------------------------------
+  def reveal_tiles(distance = Theo::VisiRange)
+    $game_map.reveal_tiles(x, y, distance)
+  end
+  
+end
+
+#===============================================================================
+# ** Game_Player
+#===============================================================================
+class Game_Player
   #----------------------------------------------------------------------------
   # * Increase step
   #----------------------------------------------------------------------------
@@ -271,7 +302,7 @@ class Game_Player
 end
 
 #===============================================================================
-# ** 
+# ** Spriteset_Map
 #===============================================================================
 
 class Spriteset_Map
