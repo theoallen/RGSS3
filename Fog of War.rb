@@ -25,7 +25,7 @@
 # be same as the VisiRange in script setting
 #
 # $game_map.events[event_id].reveal_tiles
-# $game_map.events[event_id].reveal_tiles(distance
+# $game_map.events[event_id].reveal_tiles(distance)
 # Will reveal tiles from the event location within the distance. If distance is
 # ommited, it will be same as the VisiRange in script setting
 #
