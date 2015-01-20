@@ -34,7 +34,7 @@
 # puts "Hello World!"
 # </parallel>
 #
-# The code will continue to execute. But you still allowed to trigger the event
+# The code will continue to execute. And you still allowed to trigger the event
 # using action button or any trigger type.
 # 
 #-------------------------------------------------------------------------------
