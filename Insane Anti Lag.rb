@@ -1,6 +1,6 @@
 #===============================================================================
 # TheoAllen - Insane Anti Lag
-# Version : 1.0b
+# Version : 1.0c
 # Language : English
 #-------------------------------------------------------------------------------
 # With help from following people :
@@ -18,6 +18,9 @@
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2015.01.25 - Compatibility with Shaz's Mouse Script. def events_xy now should
+#              always return array,
+#            - Avoid error 'undefined method delete_sprite for nilClass'
 # 2015.01.01 - Avoid unexpected error 'undefined method spriteset for scene'
 # 2014.12.05 - Finished
 #===============================================================================
@@ -285,7 +288,7 @@ class Game_Map
   # * Overwrite method : Event XY
   #-----------------------------------------------------------------------------
   def events_xy(x, y)
-    @table.get(x,y)
+    @table.get(x,y) || []
   end
   #-----------------------------------------------------------------------------
   # * Overwrite method : Event XY nt
@@ -497,6 +500,8 @@ class Game_Event
   # * Delete sprite
   #-----------------------------------------------------------------------------
   def delete_sprite
+    sprset = SceneManager.scene.spriteset
+    return unless sprset
     SceneManager.scene.spriteset.delete_sprite(sprite)
   end
   #-----------------------------------------------------------------------------
