@@ -1,6 +1,6 @@
 # =============================================================================
 # TheoAllen - Limited Inventory
-# Version : 1.3
+# Version : 1.4
 # Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
 # (English Documentation)
 # =============================================================================
@@ -8,6 +8,13 @@
 # =============================================================================
 # Change logs:
 # -----------------------------------------------------------------------------
+# 2015.02.02 - Added slowdown penalty when the inventory is full
+#            - Added disable dash when the inventory is full
+#            - Added force gain item to supports those newly added features
+# 2014.09.22 - Bugfix. Negative number appear when use item and inventory 
+#              reached its limit.
+#            - Compatibility patch with YEA Menu Cursor
+#            - Compatibility patch with MOG Menu Cursor as well
 # 2014.02.25 - Add limited inventory eval formula to provide flexibility
 #            - Change notetag constant to provide flexibility
 # 2014.02.16 - Base Inventory slot of an actor can be changed using script call
@@ -141,11 +148,27 @@ module Theo
   # example, you have 10 potions. And each potion has 3 size/weight. The window 
   # will show 30 instead of 3
   
+    ForceGain         = true
+  # Keep force to gain item when the item is full. Please set some penalties
+  # when the inventory is full below to serve the purpose of this script
+  # This overwrite the method gain item from default script. There is a chance 
+  # of incompatibility between different script which also use the same method
+    
+    Full_DisableDash  = true
+  # Disable dash when the inventory is full. Should be used when ForceGain
+  # is set to true. If use together with YEA System Option, please put this
+  # script below the YEA system option, unless you get rid completely the
+  # autodash config in Yanfly's script
+  
+    Full_SlowDown     = true
+  # Slowdown the player movement by 1 when the inventory is full Should be
+  # used when ForceGain is set to true
+  
   # --------------------------------------------------------------------------
   # Numeric Settings
   # --------------------------------------------------------------------------
   
-    Default_FreeSlot  = 100
+    Default_FreeSlot  = 20
   # Default values which is provided each actor. Of course, you may change
   # it by notetag. If DynamicSlot is set to false, it will be used as the total
   # avalaible slot
@@ -185,6 +208,7 @@ end
   Game_Actor  >> trade_item_with_party
   Game_Party  >> max_item_number
   Game_Party  >> item_max?
+  Game_Party  >> lose_item
   
   -----------------------------------------------------------------------------
   This script aliased these methods :
@@ -355,14 +379,51 @@ class Game_Party < Game_Unit
     item.inv_size * item_number(item)
   end
   
-  def force_gain_item(item, amount)
+  def force_gain_item(item, amount, include_equip = false)
     container = item_container(item.class)
     return unless container
     last_number = item_number(item)
     new_number = last_number + amount
     container[item.id] = [new_number, 0].max
     container.delete(item.id) if container[item.id] == 0
+    if include_equip && new_number < 0
+      discard_members_equip(item, -new_number)
+    end
     $game_map.need_refresh = true
+  end
+  
+  def lose_item(item, amount, include_equip = false)
+    force_gain_item(item, -amount, include_equip)
+  end
+  
+  alias theo_liminv_gain_item gain_item
+  def gain_item(item, amount, include_equip = false)
+    if Theo::LimInv::ForceGain
+      force_gain_item(item, amount, include_equip)
+    else
+      theo_liminv_gain_item(item, amount, include_equip)
+    end
+  end
+  
+end
+# =============================================================================
+# ▼ Game_Player
+# =============================================================================
+class Game_Player
+  
+  alias theo_liminv_dash? dash?
+  def dash?
+    return false if Theo::LimInv::Full_DisableDash && $game_party.inv_maxed?
+    return theo_liminv_dash?
+  end
+  
+  alias theo_liminv_real_move_speed real_move_speed
+  def real_move_speed
+    theo_liminv_real_move_speed - move_penalty
+  end
+  
+  def move_penalty
+    Theo::LimInv::Full_SlowDown && $game_party.inv_maxed? ? 1 : 0
   end
   
 end
@@ -779,4 +840,30 @@ class Scene_Shop < Scene_MenuBase
     @number_window.mode = :sell
     theo_liminv_sell_ok
   end
+end
+
+# =============================================================================
+# ▼ Compatibility patch thingy
+# =============================================================================
+
+if $imported["YEA-MenuCursor"]
+class Sprite_MenuCursor
+  def opacity_rate
+    rate = 16
+    return -rate if !@window.active || @window.close?
+    return rate
+  end
+end
+end
+
+if $imported[:mog_menu_cursor]
+module CURSOR_MENU_SPRITE
+  def can_update_cursor_position?
+    return false if !self.active     
+    return false if self.index < 0 
+    return false if !self.visible
+    return false if self.close?
+    return true
+  end
+end
 end
