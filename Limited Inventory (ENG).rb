@@ -618,9 +618,13 @@ class Window_DiscardAmount < Window_Base
     @itemlist.redraw_current_item
     @freeslot.refresh
     if $game_party.item_number(@item) == 0
-      @itemlist.refresh
+      Sound.play_ok
+      @itemlist.activate.refresh
+      @cmn_window.close.deactivate
+      close
+    else
+      close_window
     end
-    close_window
   end
   
   def close_window
