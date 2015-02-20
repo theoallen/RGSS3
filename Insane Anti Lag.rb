@@ -1,6 +1,6 @@
 #===============================================================================
 # TheoAllen - Insane Anti Lag
-# Version : 1.0c
+# Version : 1.1
 # Language : English
 #-------------------------------------------------------------------------------
 # With help from following people :
@@ -18,6 +18,7 @@
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2015.02.20 - Added page check enhancer to work with parallel process
 # 2015.01.25 - Compatibility with Shaz's Mouse Script. def events_xy now should
 #              always return array,
 #            - Avoid error 'undefined method delete_sprite for nilClass'
@@ -137,7 +138,7 @@ module Theo
   #-----------------------------------------------------------------------------
   
   #-----------------------------------------------------------------------------
-    Table_Range_Search = 3
+    Table_Range_Search = 2
   #-----------------------------------------------------------------------------
   # This determine how far table search will perform check. Putting 3 means that
   # it will update the event that located 3 tiles away from the screen.
@@ -157,7 +158,22 @@ module Theo
   # Disposing sprite on the fly might be problematic sometimes. When something
   # wrong happened, you can disable dispose sprite be setting this to false.
   #-----------------------------------------------------------------------------
-    
+  
+  #-----------------------------------------------------------------------------
+    PageCheck_Enchancer = true
+  #-----------------------------------------------------------------------------
+  # When a lot of events put together in one map, and each has 20 pages, and
+  # you have parallel process to change the variable or switches, you will see
+  # noticable lag. 
+  #
+  # This kind of enhancer only refresh the visible events on the screen or when
+  # the event is on the visible range. So that it prevents to refresh all events 
+  # This concept is a fool proof to the player since they will never know what
+  # is in their visible range
+  #
+  # However, this may ruin some system since this concept is still experimental.
+  #-----------------------------------------------------------------------------
+  
   end
 end
 
@@ -272,6 +288,7 @@ class Game_Map
     @forced_update_events = []
     @keep_update_events = []
     @starting_events = []
+    @refreshed_events = []
     theo_antilag_setup_events
     select_on_screen_events
   end
@@ -325,9 +342,19 @@ class Game_Map
   # * Overwrite method : Refresh
   #-----------------------------------------------------------------------------
   def refresh
+    return table_refresh if table_update? && Theo::AntiLag::PageCheck_Enchancer
     @events.each_value {|event| next if event.never_refresh; event.refresh }
     @common_events.each {|event| event.refresh }
     refresh_tile_events
+    @need_refresh = false
+  end
+  #-----------------------------------------------------------------------------
+  # * New method : Refresh event by table search
+  #-----------------------------------------------------------------------------
+  def table_refresh
+    @refreshed_events = []
+    @tile_events = []
+    @common_events.each {|event| event.refresh }
     @need_refresh = false
   end
   #-----------------------------------------------------------------------------
@@ -368,6 +395,13 @@ class Game_Map
         ypos = loop_vertical? ? (y + dpy) % height : y + dpy
         next if xpos >= width || ypos >= height
         ary = @table.get(xpos, ypos)
+        ary.each do |ev| 
+          unless @refreshed_events.include?(ev.id)
+            ev.refresh
+            @tile_events << ev if ev.tile?
+            @refreshed_events << ev.id
+          end
+        end if Theo::AntiLag::PageCheck_Enchancer
         @cached_events += ary
       end
     end
