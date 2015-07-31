@@ -1,6 +1,6 @@
 #==============================================================================
 # TheoAllen - Invisible Regions
-# Version : 1.0
+# Version : 1.1
 # Language : Informal Indonesian
 # Requires : Basic Modules v1.5 - Basic Functions
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -14,6 +14,7 @@
 # =============================================================================
 # Change Logs:
 # -----------------------------------------------------------------------------
+# 2015.08.01 - Added always visible region
 # 2014.11.22 - Finished script
 # =============================================================================
 =begin
@@ -40,6 +41,13 @@
   
   Agar event tetap ditampilkan, masukkan event comment, lalu isi dengan
   <visible>
+  
+  ----------
+  UPDATE 1.1
+  
+  Untuk membuat region tertentu tetap dapat dilihat walau player tidak berada
+  pada region tersebut, gunakan notetag <visireg: n> pada peta. Dimana 'n'
+  adalah angka dari region ID yang akan tetap dapat dilihat
   
   ===================
   *) Terms of use ||
@@ -91,10 +99,12 @@ class TileMask < Plane_Mask
       return
     end
     bitmap.entire_fill(Color.new(0,0,0,220))
-    $game_map.regions[@region_id].each do |pos|
-      x = pos[0] * 32
-      y = pos[1] * 32
-      bitmap.clear_rect(x,y,32,32)
+    ($game_map.visiregs + [@region_id]).each do |visireg|
+      $game_map.regions[visireg].each do |pos|
+        x = pos[0] * 32
+        y = pos[1] * 32
+        bitmap.clear_rect(x,y,32,32)
+      end
     end
   end
   #-----------------------------------------------------------------------------
@@ -120,6 +130,7 @@ class Game_Map
   #-----------------------------------------------------------------------------
   attr_accessor :refresh_tilemask
   attr_reader :regions
+  attr_reader :visiregs
   #-----------------------------------------------------------------------------
   # * Setup
   #-----------------------------------------------------------------------------
@@ -138,6 +149,12 @@ class Game_Map
       height.times do |h|
         regid = region_id(w,h)
         (@regions[regid] ||= []) << [w,h]
+      end
+    end
+    @visiregs = []
+    @map.note.split(/[\r\n]+/).each do |line|
+      if line =~ /<visireg\s*:\s*(\d+)>/i
+        @visiregs << $1.to_i
       end
     end
   end
@@ -202,7 +219,8 @@ class Game_Event
   # * Opacity
   #-----------------------------------------------------------------------------
   def opacity
-    return @opacity if stay_visible? || !$game_map.invisible_region?
+    return @opacity if stay_visible? || !$game_map.invisible_region? ||
+      $game_map.visiregs.include?(region_id)
     return 0 if region_id != $game_player.region_id
     return @opacity
   end
