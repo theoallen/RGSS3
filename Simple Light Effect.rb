@@ -1,6 +1,6 @@
 # =============================================================================
 # TheoAllen - Light Effect
-# Version : 1.2
+# Version : 1.2b
 # Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
 # (This script documentation is written in informal indonesian language)
 # =============================================================================
@@ -8,6 +8,8 @@
 # =============================================================================
 # Change logs:
 # -----------------------------------------------------------------------------
+# 2015.08.26 - Fixed bug where light effect in event didn't updated
+#            - Update compatibility with invisible region
 # 2014.11.08 - Change light viewport.
 #            - Support display light effect on player
 # 2014.07.21 - Bugfix, fading function isn't working properly
@@ -345,13 +347,15 @@ class Theo_LightFX < Sprite
   def initialize(char, viewport = nil)
     super(viewport)
     @char = char
+    init_members
     setup(@char.light_key)
   end
   
   def setup(key)
     @key = key.nil? ? "" : key
-    init_members
-    return if @key.empty?
+    if @key.empty?
+      return
+    end
     setup_database(key)
     self.ox = self.width/2
     self.oy = self.height/2
@@ -400,8 +404,8 @@ class Theo_LightFX < Sprite
   end
   
   def update
-    super
     setup(@char.light_key) if light_changed?
+    super
     @count += 1
     update_placement
     update_op_fade
@@ -436,6 +440,7 @@ class Theo_LightFX < Sprite
   
   def update_opacity
     self.opacity = @ori_opacity + @opacity_offset + @op_fade
+    self.opacity = 0 if @char.opacity == 0 && $imported[:Theo_InvisRegion]
     return unless refresh_count?(@opacity_rate)
     @opacity_offset = -@opacity_var + rand(@opacity_var*2)
   end
