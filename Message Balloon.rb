@@ -1,6 +1,6 @@
 #==============================================================================
 # TheoAllen - Message Balloon
-# Version : 2.0
+# Version : 2.0b
 # Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
 # (This script documentation is written in informal indonesian language)
 #==============================================================================
@@ -8,6 +8,7 @@
 #==============================================================================
 # Change Logs :
 #------------------------------------------------------------------------------
+# 2015.10.28 - Fix bug where balloon message isn't displayed after transfer map
 # 2014.12.26 - Rewrite for version 2.0
 #            - Get rid gradient background. Bring back windowskin
 #            - Added opening animation
@@ -67,7 +68,7 @@ module Theo
   module Msg
   
   # Jarak keatas message balloon (default: 32)
-    Buffer_Y     = 42
+    Buffer_Y     = 45#42
   
   # Ukuran font dalam balloon  
     FontSize     = 22
@@ -79,14 +80,14 @@ module Theo
     UseOpening   = true
     
   # Kecepatan opening
-    OpeningSpeed = 25
+    OpeningSpeed = 15
     
   # Warna popup opening (red, green, blue)
     OpeningColor = Color.new(255,255,255)
     
   # Opening SE. Tuliskan dengan RPG::SE.new('nama', volume, pitch)
   # Isi dengan nil jika tidak digunakan
-    OpeningSE = RPG::SE.new('Open1', 80, 150)
+    OpeningSE = RPG::SE.new('System_Popup_ON', 80, 150)
     
   # Closing SE. Tuliskan dengan RPG::SE.new('nama', volume, pitch)
   # Isi dengan nil jika tidak digunakan
@@ -305,7 +306,7 @@ class BalloonPointer < Sprite
     super(viewport)
     @window = window
     @pos = :upper
-    self.bitmap = Cache.system("ballonpointer")
+    self.bitmap = Cache.system("ballonpointer")#("ballonpointer")
     to_center
     update
   end
@@ -742,6 +743,22 @@ class Window_ChoiceList < Window_Command
   alias theo_msgballoon_line_height line_height
   def line_height
     @message_window.balloon? ? Theo::Msg::FontSize : theo_msgballoon_line_height
+  end
+  
+end
+
+#==============================================================================
+# ** Scene_Map
+#==============================================================================
+class Scene_Map
+  
+  #--------------------------------------------------------------------------
+  # * Alias : Post Transfer
+  #--------------------------------------------------------------------------
+  alias theo_msgballoon_post_transfer post_transfer
+  def post_transfer
+    theo_msgballoon_post_transfer
+    $game_message.subject = 0
   end
   
 end
