@@ -1,6 +1,6 @@
 # =============================================================================
 # TheoAllen - Limited Inventory
-# Version : 1.4
+# Version : 1.4b
 # Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
 # (English Documentation)
 # =============================================================================
@@ -8,6 +8,7 @@
 # =============================================================================
 # Change logs:
 # -----------------------------------------------------------------------------
+# 2017.03.05 - Help window updated when item removed by discarding
 # 2015.02.02 - Added slowdown penalty when the inventory is full
 #            - Added disable dash when the inventory is full
 #            - Added force gain item to supports those newly added features
@@ -620,6 +621,7 @@ class Window_DiscardAmount < Window_Base
     if $game_party.item_number(@item) == 0
       Sound.play_ok
       @itemlist.activate.refresh
+      @itemlist.update_help
       @cmn_window.close.deactivate
       close
     else
