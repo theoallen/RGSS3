@@ -1,6 +1,6 @@
 # =============================================================================
 # TheoAllen - Limited Inventory
-# Version : 1.4b
+# Version : 1.4c
 # Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
 # (English Documentation)
 # =============================================================================
@@ -8,6 +8,7 @@
 # =============================================================================
 # Change logs:
 # -----------------------------------------------------------------------------
+# 2017.03.08 - Fixed minor issue on updating help window
 # 2017.03.05 - Help window updated when item removed by discarding
 # 2015.02.02 - Added slowdown penalty when the inventory is full
 #            - Added disable dash when the inventory is full
@@ -644,7 +645,7 @@ class Window_ItemList < Window_Selectable
   
   def item_size_window=(window)
     @item_size_window = window
-    update_help
+    @item_size_window.set_item(item)
   end
   
   alias theo_liminv_update_help update_help
