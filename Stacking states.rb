@@ -1,7 +1,6 @@
 # =============================================================================
 # TheoAllen - Stacking States
 # Version : 1.0
-# Eng ver : later ....
 # =============================================================================
 ($imported ||= {})[:Theo_StackingState] = true
 # =============================================================================
@@ -74,16 +73,6 @@ class Game_Battler < Game_BattlerBase
   def state_maxed?(state_id)
     @states.select {|id| id == state_id}.size == 
       $data_states[state_id].max_stack
-  end
-  
-  def state_icons
-    icons = states.collect {|state| state.icon_index }.uniq
-    icons.delete(0)
-    icons
-  end
-  
-  def state_total(state_id)
-    @states.each_with_object(Hash.new(0)) { |s,d| d[s] += 1 }[state_id]
   end
   
 end
