@@ -1,8 +1,7 @@
 # =============================================================================
 # TheoAllen - Terrain Tag as Passability
-# Version : 1.1
-# Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
-# (English Documentation)
+# Version: 1.1
+# Contact: Discord @ Theo#3034
 # =============================================================================
 ($imported ||= {})[:Theo_TagPassability] = true
 # =============================================================================
@@ -14,10 +13,10 @@
 # =============================================================================
 =begin
 
-  Perkenalan : 
+  Intro : 
   This script can make terrain tag as passability instead of use X or O
   
-  Cara penggunaan :
+  How to use :
   Put this script below material but above main
   Setting terrain tag in database, use this comment in event  
   
