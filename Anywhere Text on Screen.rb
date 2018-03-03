@@ -1,8 +1,7 @@
 # =============================================================================
 # TheoAllen - Anywhere Texts On Screen
-# Version : 1.1
-# Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
-# (English Documentation)
+# Version: 1.1
+# Contact: Discord @ Theo#3034
 # =============================================================================
 ($imported ||= {})[:Theo_AnywhereText] = true
 # =============================================================================
@@ -69,9 +68,11 @@
   
   ----------------------------------------------------------------------------
   Terms of use :
-  Credit me, TheoAllen. You are free to edit this script by your own. As long
-  as you don't claim it yours. For commercial purpose, don't forget to give me
-  a free copy of the game.
+  > Free to edit / Repost of edit
+  > Link back to original if edited
+  > Credit me TheoAllen
+  > Free for non-commercial use / Give me a free copy for commercial use
+  > Not available for contest with prize such as IGMC
 
 =end
 # =============================================================================
