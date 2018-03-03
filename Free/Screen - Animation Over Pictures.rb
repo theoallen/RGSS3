@@ -1,43 +1,37 @@
 #==============================================================================
 # TheoAllen - Animation Over Pictures
-# Version : 1.0
-# Language : Informal Indonesian
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Contact :
-#------------------------------------------------------------------------------
-# *> http://www.rpgmakerid.com
-# *> http://www.rpgmakervxace.net
-# *> http://www.theolized.com
+# Version: 1.0
+# Contact: Discord @ Theo#3034
 #==============================================================================
 ($imported ||= {})[:Theo_AnimationOverPic] = true
 #==============================================================================
 # Change Logs:
 # -----------------------------------------------------------------------------
+# 2018.03.03 - Translated to eng
 # 2013.10.27 - Finished
 #==============================================================================
 %Q{
 
   =================
-  || Perkenalan ||
+  || Introduction ||
   -----------------
-  Secara default, play animasi bakal berada di belakangnya picture yang kamu
-  tampilkan lewat show picture. Nah, script ini ngebikin agar animasi bisa 
-  dijalankan di depannya picture
+  Don't you hate it when the animation is played behind the picture? Why not
+  play the animation over the picture?
   
   ======================
-  || Cara penggunaan ||
+  || How to use ||
   ----------------------
-  Pasang script ini di bawah material namun di atas main
-  Untuk memanggil animasi pada picture, gunakan script call
+  Put the script below material and above main
+  To use animation, use a script call
   
   anim_pic(pic_number, animation_id)
   
   ===================
   || Terms of use ||
   -------------------
-  Credit gw, TheoAllen. Kalo semisal u bisa ngedit2 script gw trus jadi lebih
-  keren, terserah. Ane bebasin. Asal ngga ngeklaim aja. Kalo semisal mau
-  dipake buat komersil, jangan lupa, gw dibagi gratisannya.
+  > Free to edit / Repost of edit
+  > Free for commercial / non-commercial / contest with prize
+  > Credit is not required, but don't claim it's yours
   
 }
 #==============================================================================
