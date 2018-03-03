@@ -1,5 +1,6 @@
 #===============================================================================
-# Skip message jika selama X frame tidak ada input
+# Message will be skipped when there is no input until a certain frames has
+# passed
 #===============================================================================
 class Window_Message
   FrameWait = 60
