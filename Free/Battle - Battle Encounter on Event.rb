@@ -1,13 +1,7 @@
 #===============================================================================
 # TheoAllen - Battle Encounter on Event
-# Version : 1.0
-# Language : English
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Contact :
-#-------------------------------------------------------------------------------
-# *> http://www.rpgmakerid.com
-# *> http://www.rpgmakervxace.net
-# *> http://www.theolized.com
+# Version: 1.0
+# Contact: Discord @ Theo#3034
 #===============================================================================
 ($imported ||= {})[:Theo_BattleEvent] = true
 #===============================================================================
@@ -41,9 +35,9 @@
   ------------------------------------------
   *) Terms of use : 
   ------------------------------------------
-  Credit me, TheoAllen. You are free to edit this script by your own. As long 
-  as you don't claim it's yours. For commercial purpose, don't forget to give me
-  a free copy of the game.
+  > Free to edit / Repost of edit
+  > Free for commercial / non-commercial / contest with prize
+  > Credit is not required, but don't claim it's yours
 
 =end
 #===============================================================================
