@@ -17,7 +17,9 @@
 # 4. Any dead cell with exactly three live neighbours becomes a live cell, as 
 #    if by reproduction.
 #
-# Now, pay attention to the grids. Press A to reset the seed
+# How to use :
+# Just put it in script editor, playtest, and watch
+# Press A to reset the seed
 #
 #===============================================================================
 # *) Terms of Use :
