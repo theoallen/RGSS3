@@ -6,8 +6,9 @@
   getting hit. Simply put <no charge> in skill / item notebox.
   
   Terms of Use :
-  If you feel grateful, write TheoAllen in your credit list. Free to use for
-  both non-commercial and commercial
+  > Free to edit / Repost
+  > Free for commercial
+  > Credit is not required, but don't claim it's yours
  
 =end
 class RPG::UsableItem
