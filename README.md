@@ -1,14 +1,8 @@
 Terms of Use
 =====
 
-**Indonesian**
-
-Credit gw, TheoAllen kalo kamu make script gw. Script-script yg gw share disini bebas dipakai atau diedit. 
-Jika kamu ingin mengepost script editan gw, setidaknya kamu ngasi tau lah. Untuk pemakaian soal komersil, 
-boleh2 aja dipakai asal gw dikasi gratisannya.
-
-**English**
-
-Credit me, TheoAllen if you use one of my script. You may use and edit it as you like. 
-If you want to repost my script in edited version, just let me know. You may also use my script in commercial purpose 
-with one condition. Just give me a free copy of your game. Some script may not require credit
+* All my scripts in "Free" folder are free to use both commercial and non-commercial. Some scripts may need no credit
+* All my scripts outside the "Free" folder requires you give me a free copy of your game for commercial use
+* All my scripts outside the "Free" folder can not be used for a contest with prize such as IGMC until further notice
+* All my scripts are free to edit / Repost of edit as long as you retain the credit to me
+* Credit goes by my name, TheoAllen.
