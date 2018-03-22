@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 # Getting tired of animated title screen script that offers you a lot of things 
 # you don't even need? And why not just use traditional frame per frame 
-# animation background?
+# animated background?
 #
 # This script is an answer for you
 #
