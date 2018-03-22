@@ -2,9 +2,9 @@
 # Super Simple Animated Title Screen
 # By: TheoAllen
 #-------------------------------------------------------------------------------
-# Getting tired of animated title screen script that offers you a lot of things 
-# you don't even need? And why not just use traditional frame per frame 
-# animated background?
+# Getting tired of animated title screen that offers you a lot of things you
+# don't even need? And why not just use traditional frame per frame animation
+# background?
 #
 # This script is an answer for you
 #
@@ -27,13 +27,26 @@ end
 #===============================================================================
 # End of config
 #===============================================================================
+module Cache
+  def self.dispose(path)
+    @cache[path].dispose if @cache[path] && !@cache[path].disposed?
+  end
+end
+
 class Scene_Title
   
   alias ss_anim_title_start start
   def start
     ss_anim_title_start
+    precache_animation
     @count = 0
     @bg_index = 0
+  end
+  
+  def precache_animation
+    SSAnimTitle::BackGround.each do |name|
+      Cache.title1(name)
+    end
   end
   
   alias ss_anim_title_update update
@@ -50,4 +63,11 @@ class Scene_Title
     center_sprite(@sprite1)
   end
   
+  alias ss_anim_title_terminate terminate
+  def terminate
+    ss_anim_title_terminate
+    SSAnimTitle::BackGround.each do |name|
+      Cache.dispose("Graphics/Titles1/" + name)
+    end
+  end
 end
