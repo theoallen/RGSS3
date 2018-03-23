@@ -8,9 +8,10 @@ module THEO
 # =============================================================================
 # CHANGE LOGS:
 # -----------------------------------------------------------------------------
+# 2018.03.23 - Flash effect being removed after flash_off is called
 # 2018.02.19 - Reworked + Translated
-# 2013.05.02 - Nambahin dokumentasi lebih detil
-#            - Nambahin konfigurasi SE
+# 2013.05.02 - Add detailed documentation
+#            - Add SE config
 # 2013.04.14 - Started and Finished script
 # =============================================================================
 =begin
@@ -80,6 +81,20 @@ module THEO
   
   def self.flash_off
     $game_system.flash_switch = false
+    screen.lights_out
+  end
+  
+  def self.screen
+    $game_party.in_battle ? $game_troop.screen : $game_map.screen
+  end
+  
+end
+
+class Game_Screen
+  
+  def lights_out
+    @flash_color.alpha = 0
+    @flash_duration = 0
   end
   
 end
@@ -157,9 +172,9 @@ end
 
 class Scene_Map < Scene_Base
 
-  alias vg_update update
+  alias storm_update update
   def update
-    vg_update
+    storm_update
     $game_system.update_effect
   end
   
