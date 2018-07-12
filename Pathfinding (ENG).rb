@@ -1,6 +1,6 @@
 #==============================================================================
-# TheoAllen - A* Pathfinding
-# Version : 1.0
+# TheoAllen - Pathfinding
+# Version : 1.0b
 # Language : English
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Contact :
@@ -13,6 +13,8 @@
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2018.07.12 - Fixed a game breaking bug where move route overwriting the 
+#              original move route from event instead of copy and alter it.
 # 2015.01.08 - English translation
 # 2015.01.07 - Added A* Pathfinding
 #            - Map loop support pathfinding
@@ -224,6 +226,8 @@ end
 #===============================================================================
 
 class Game_Character
+  attr_reader :move_route
+  attr_reader :move_route_index
   #----------------------------------------------------------------------------
   # * Find path (x, y)
   #   Do not set clear to true in move route script
@@ -231,6 +235,7 @@ class Game_Character
   def find_path(tx, ty, clear = false)
     return if x == tx && y == ty
     return unless [2,4,6,8].any? {|dir| passable?(tx, ty, dir)}
+    last_code = @move_code || []
     
     # Initialize
     @move_code = nil
@@ -267,8 +272,9 @@ class Game_Character
         mv_list.insert(insert_index, li)
         insert_index += 1
       end
+      @move_route = copy(@move_route)
       @move_route.list = mv_list
-      @move_route_index -= 1
+      @move_route_index -= 1 
     end
     @target_findx = @target_findy = nil
   end
@@ -443,4 +449,10 @@ class Game_Event
     @player_lastpost == [$game_player.x, $game_player.y]
   end
   
+end
+#===============================================================================
+# ** Misc
+#===============================================================================
+def copy(object)
+  Marshal.load(Marshal.dump(object))
 end
