@@ -6,3 +6,5 @@ Terms of Use
 * All my scripts outside the "Free" folder can not be used for a contest with prize such as IGMC until further notice
 * All my scripts are free to edit / Repost of edit as long as you retain the credit to me
 * Credit goes by my name, TheoAllen.
+
+Repository last update: 2018.07.12
