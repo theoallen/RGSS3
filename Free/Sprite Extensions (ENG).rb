@@ -35,13 +35,6 @@
   
   As I already described above, now it's your turn to use window's function
   on Sprite class or Plane. The rest is depends on how do you use that.
-  
-  ===================
-  || Terms of use ||
-  -------------------
-  Credit me, TheoAllen. You are free to edit this script by your own. As long 
-  as you don't claim it yours. For commercial purpose, don't forget to give me 
-  a free copy of the game.
 
 }
 # =============================================================================
@@ -105,18 +98,3 @@ class Plane
   end
   
 end
-
-#~ DataManager.init
-#~ def updates
-#~   Graphics.update
-#~   Input.update
-#~   @sprite.update
-#~ end
-
-#~ @sprite = Sprite.new
-#~ @sprite.bitmap = Bitmap.new(544, 416)
-#~ text = "Testing Icon \\I[34]\nNew line\n\nNew line\n\\C[23]change color?" +
-#~ "\n\n\\C[0]Well... you can even call draw actor simple status :3"
-#~ @sprite.draw_text_ex(0,0,text)
-#~ @sprite.draw_actor_simple_status($game_actors[1], 0, 24 * 8)
-#~ updates while true
