@@ -1,11 +1,12 @@
 # =============================================================================
 # TheoAllen - Character Animation Loop
-# Version : 1.0
+# Version : 1.1
 # =============================================================================
 ($imported ||= {})[:Theo_CharAnimloop] = true
 # =============================================================================
 # Change Logs:
 # -----------------------------------------------------------------------------
+# 2018.07.15 - Fixes script efficiency for less fps drop
 # 2014.02.12 - Finished script
 # =============================================================================
 =begin
@@ -33,12 +34,9 @@
   
   -----------------------------------------------------------------------------
   Terms of use :
-  > Free to edit / Repost of edit
-  > Link back to original if edited
-  > Credit me TheoAllen
-  > Free for non-commercial use / Give me a free copy for commercial use
-  > Not available for contest with prize such as IGMC
-
+  Credit me, TheoAllen. You are free to edit this script by your own. As long
+  as you don't claim it yours. For commercial purpose, don't forget to give me
+  a free copy of the game.
 
 =end
 # =============================================================================
@@ -65,12 +63,28 @@ class Game_Character
     @animloop_id = id
     @animloop_mirror = mirror
     @animloop_rate = rate
+    sprset = get_spriteset
+    return unless sprset
+    spr = get_spriteset.get_sprite(self)
+    get_spriteset.get_sprite(self).end_animation if spr
   end
   
   def end_animloop
     init_animloop_members
   end
   
+  def animloop_id
+    return @animloop_id ||= 0
+  end
+  
+end
+
+class Game_Event
+  alias animloop_setup_page setup_page_settings
+  def setup_page_settings
+    animloop_setup_page
+    init_animloop_members
+  end
 end
 # -----------------------------------------------------------------------------
 # Pseudo Sprite for animation
@@ -147,22 +161,27 @@ end
 
 class Sprite_Character
   
-  alias theo_animloop_id_init initialize
-  def initialize(*args)
-    theo_animloop_id_init(*args)
-    @sprite_animloop = Char_Animloop.new(self)
-  end
-  
   alias theo_animloop_id_update update
   def update
     theo_animloop_id_update
+    if character.animloop_id > 0 && !@sprite_animloop
+      @sprite_animloop = Char_Animloop.new(self)
+    end
     @sprite_animloop.update if @sprite_animloop
   end
   
   alias theo_animloop_id_dispose dispose
   def dispose
     theo_animloop_id_dispose
-    @sprite_animloop.dispose
+    @sprite_animloop.dispose if @sprite_animloop
+  end
+  
+end
+
+class Spriteset_Map
+  
+  def get_sprite(char)
+    @character_sprites.find {|c| c.character == char}
   end
   
 end
