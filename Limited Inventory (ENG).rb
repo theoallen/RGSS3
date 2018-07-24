@@ -1,7 +1,7 @@
 # =============================================================================
 # TheoAllen - Limited Inventory
 # Version : 1.4c
-# Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
+# Contact : Discord @ Theo#3034
 # (English Documentation)
 # =============================================================================
 ($imported ||= {})[:Theo_LimInventory] = true
