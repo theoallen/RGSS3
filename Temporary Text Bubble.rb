@@ -86,7 +86,7 @@ class Sprite_Bubble < Sprite
     update_position
     @timeout -= 1
     if @timeout == 0
-      if $imported[:Theo_CoreFade]
+      if $imported[:Theo_CoreFade] && !fade?
         fadeout(30)
       else
         dispose
