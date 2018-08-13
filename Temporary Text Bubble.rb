@@ -23,6 +23,11 @@
 # > bubble("What was that?")
 # > bubble("What was that?", 120)
 #
+# For splitting into two line, use \n
+# Example :
+# > bubble("What was that? Sure\n I saw something")
+# > bubble("What was that? Sure\n I saw something", 120)
+#
 #===============================================================================
 # > Terms of Use
 #-------------------------------------------------------------------------------
@@ -32,7 +37,7 @@
 #===============================================================================
 class Sprite_Bubble < Sprite
   Height = 16
-  Col = Color.new(0,0,0,200)
+  Col = Color.new(0,0,0,180)
   
   def initialize(vport, char, text, timeout = 60)
     super(vport)
@@ -44,13 +49,12 @@ class Sprite_Bubble < Sprite
   end
   
   def show_text(text)
-    @text = text
-    size = self.bitmap.text_size(text).width
-    bmp = Bitmap.new(size+10,Height + 4)
+    @text = text.split(/\n/)
+    s = @text.collect {|t| self.bitmap.text_size(t).width}.max
+    bmp = Bitmap.new(s+10,Height*@text.size + 5)
     self.bitmap = bmp
     bitmap.font.size = Height
     draw_background
-    draw_pointer
     draw_message
     self.ox = width/2
     self.oy = height
@@ -59,26 +63,28 @@ class Sprite_Bubble < Sprite
   
   def draw_background
     # main body
-    bitmap.fill_rect(2,0,width-4,Height,Col)
+    h = Height*@text.size + 1
+    bitmap.fill_rect(2,0,width-4,h,Col)
     
     # border left
-    bitmap.fill_rect(1,1,1,Height-2,Col)
-    bitmap.fill_rect(0,2,1,Height-4,Col)
+    bitmap.fill_rect(1,1,1,h-2,Col)
+    bitmap.fill_rect(0,2,1,h-4,Col)
     
     # border right
-    bitmap.fill_rect(width-1 ,2 ,1 ,Height-4,Col)
-    bitmap.fill_rect(width-2 ,1 ,1 ,Height-2,Col)
-  end
-  
-  def draw_pointer
-    bitmap.fill_rect(width/2-3, Height    ,7,1,Col)
-    bitmap.fill_rect(width/2-2, Height+1  ,5,1,Col)
-    bitmap.fill_rect(width/2-1, Height+2  ,3,1,Col)
-    bitmap.fill_rect(width/2,   Height+3  ,1,1,Col)
+    bitmap.fill_rect(width-1 ,2 ,1 ,h-4,Col)
+    bitmap.fill_rect(width-2 ,1 ,1 ,h-2,Col)
+    
+    # pointer
+    bitmap.fill_rect(width/2-3, h    ,7,1,Col)
+    bitmap.fill_rect(width/2-2, h+1  ,5,1,Col)
+    bitmap.fill_rect(width/2-1, h+2  ,3,1,Col)
+    bitmap.fill_rect(width/2,   h+3  ,1,1,Col)
   end
   
   def draw_message
-    draw_text(0,0,width,20,@text,1)
+    @text.each_with_index do |t,i|
+      bitmap.draw_text(5,Height*i,width,20,t)
+    end
   end
   
   def update
