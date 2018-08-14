@@ -45,6 +45,7 @@ class Sprite_Bubble < Sprite
     self.bitmap = Bitmap.new(23,23)
     bitmap.font.size = Height
     show_text(text)
+    @timeout = timeout
     update
   end
   
@@ -58,7 +59,6 @@ class Sprite_Bubble < Sprite
     draw_message
     self.ox = width/2
     self.oy = height
-    @timeout = 60 + 1
   end
   
   def draw_background
