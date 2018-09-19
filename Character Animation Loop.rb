@@ -1,11 +1,12 @@
 # =============================================================================
 # TheoAllen - Character Animation Loop
-# Version : 1.1
+# Version : 1.1b
 # =============================================================================
 ($imported ||= {})[:Theo_CharAnimloop] = true
 # =============================================================================
 # Change Logs:
 # -----------------------------------------------------------------------------
+# 2018.08.07 - Added bottom flag
 # 2018.07.15 - Fixes script efficiency for less fps drop
 # 2014.02.12 - Finished script
 # =============================================================================
@@ -24,11 +25,19 @@
   animloop(id)
   animloop(id, mirror)
   animloop(id, mirror, rate)
+  animloop(id, mirror, rate, bottom)
   
-  id > is animation id in database
-  mirror > will animation will be mirrored? (true/false)
-  rate > animation speed. Put in from range 1 ~ 4
+  id      > animation id in database
+  mirror  > will animation will be mirrored? (true/false)
+  rate    > animation speed. Put in from range 1 ~ 4
+  bottom  > true/false. If set to true, will play behind the sprite. Default
+            is false
   
+  If you just want to play animation on the back, just have to fill ALL the
+  others even though u don't need it. For example
+  
+  animloop(66, false, 3, true)
+            
   To stop animation, write a script call
   end_animloop
   
@@ -39,13 +48,14 @@
   a free copy of the game.
 
 =end
-# =============================================================================
-# Tidak ada konfigurasi. Jangan sentuh apapun di bawah ini
-# =============================================================================
+#==============================================================================
+# No config whatsoever
+#==============================================================================
 class Game_Character
   attr_accessor :animloop_id
   attr_accessor :animloop_mirror
   attr_accessor :animloop_rate
+  attr_accessor :animloop_bottom
   
   alias theo_animloop_id_init initialize
   def initialize
@@ -57,12 +67,14 @@ class Game_Character
     @animloop_id = 0
     @animloop_mirror = false
     @animloop_rate = 3
+    @animloop_bottom = false
   end
   
-  def animloop(id, mirror = false, rate = 3)
+  def animloop(id, mirror = false, rate = 3, bottom = false)
     @animloop_id = id
     @animloop_mirror = mirror
     @animloop_rate = rate
+    @animloop_bottom = bottom
     sprset = get_spriteset
     return unless sprset
     spr = get_spriteset.get_sprite(self)
@@ -78,17 +90,9 @@ class Game_Character
   end
   
 end
-
-class Game_Event
-  alias animloop_setup_page setup_page_settings
-  def setup_page_settings
-    animloop_setup_page
-    init_animloop_members
-  end
-end
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Pseudo Sprite for animation
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class Char_Animloop < Sprite_Base  
   attr_reader :char_sprite
   
@@ -155,6 +159,41 @@ class Char_Animloop < Sprite_Base
   
   def set_animation_rate
     @ani_rate = character.animloop_rate
+  end
+  
+    def animation_set_sprites(frame)
+    cell_data = frame.cell_data
+    @ani_sprites.each_with_index do |sprite, i|
+      next unless sprite
+      pattern = cell_data[i, 0]
+      if !pattern || pattern < 0
+        sprite.visible = false
+        next
+      end
+      sprite.bitmap = pattern < 100 ? @ani_bitmap1 : @ani_bitmap2
+      sprite.visible = true
+      sprite.src_rect.set(pattern % 5 * 192,
+        pattern % 100 / 5 * 192, 192, 192)
+      if @ani_mirror
+        sprite.x = @ani_ox - cell_data[i, 1]
+        sprite.y = @ani_oy + cell_data[i, 2]
+        sprite.angle = (360 - cell_data[i, 4])
+        sprite.mirror = (cell_data[i, 5] == 0)
+      else
+        sprite.x = @ani_ox + cell_data[i, 1]
+        sprite.y = @ani_oy + cell_data[i, 2]
+        sprite.angle = cell_data[i, 4]
+        sprite.mirror = (cell_data[i, 5] == 1)
+      end
+      zpos = character.animloop_bottom ? 50 - 17 : 300
+      sprite.z = self.z + zpos + i
+      sprite.ox = 96
+      sprite.oy = 96
+      sprite.zoom_x = cell_data[i, 3] / 100.0
+      sprite.zoom_y = cell_data[i, 3] / 100.0
+      sprite.opacity = cell_data[i, 6] * self.opacity / 255.0
+      sprite.blend_type = cell_data[i, 7]
+    end
   end
   
 end
