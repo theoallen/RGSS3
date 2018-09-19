@@ -227,3 +227,6 @@ end
 def get_spriteset
   get_scene.instance_variable_get("@spriteset")
 end
+def get_scene
+  SceneManager.scene
+end
