@@ -224,3 +224,6 @@ class Spriteset_Map
   end
   
 end
+def get_spriteset
+  get_scene.instance_variable_get("@spriteset")
+end
