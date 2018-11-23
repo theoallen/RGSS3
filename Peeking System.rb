@@ -1,19 +1,40 @@
-#------------------
-# By : TheoAllen
+#===============================================================================
 # Peeking System
+# By : TheoAllen
+#-------------------------------------------------------------------------------
+# WHAT IS THIS?
+#-------------------------------------------------------------------------------
+# Want to take a look at surrounding?
 #
-# This script was used in my IGMC Entry at 2017
-# Game name: Sample09
-# THIS SCRIPT MAY ONLY WORKS IN NON-LOOPING MAP
-#------------------
-class Game_Map
-  
-  DURATION = 100
-  CAM_X = 7.0
-  CAM_Y = 5.0
-  PEEK_SWITCH = 10   # ON = disable
-  PEEK_BUTTON = :Z
-  
+# You press the key (adjustable in config)
+# And the game will look further in your map
+#
+# This script was used in my IGMC entry at 2017
+# https://richter-h.itch.io/sample09
+#-------------------------------------------------------------------------------
+# IMPORTANT NOTE
+#-------------------------------------------------------------------------------
+# Map looping may not work. If you have a looping map in your game, 
+# unfortunately you either have to let this script go or ditch your looping map.
+#-------------------------------------------------------------------------------
+# TERMS
+#-------------------------------------------------------------------------------
+# Credit me, TheoAllen. You are free to edit this script by your own. As long 
+# as you don't claim it's yours. For commercial purpose, don't forget to give me
+# a free copy of the game.
+#===============================================================================
+class Game_Map  # <-- don't touch this
+  #=============================================================================
+  # Configuration
+  #-----------------------------------------------------------------------------
+    DURATION = 100      # Duration of the moving camera
+    CAM_X = 7.0         # How far the camera will look further in X axis?
+    CAM_Y = 5.0         # How far the camera will look further in Y axis?
+    PEEK_SWITCH = 10    # ON = disable
+    PEEK_BUTTON = :Z    # What to press?
+  #-----------------------------------------------------------------------------
+  # Ok, do not edit pass this line
+  #=============================================================================
   alias mapcam_init initialize
   def initialize
     mapcam_init
@@ -117,6 +138,7 @@ class Game_Map
     $game_switches[PEEK_SWITCH]
   end
   
+  # Overwrite
   def parallax_ox(bitmap)
     return 0 unless bitmap
     w1 = [bitmap.width - Graphics.width, 0].max
@@ -124,6 +146,7 @@ class Game_Map
     display_x * 32 * w1 / w2
   end
   
+  # Overwrite
   def parallax_oy(bitmap)
     return 0 unless bitmap
     h1 = [bitmap.height - Graphics.height, 0].max
@@ -134,17 +157,22 @@ class Game_Map
 end
 
 class Game_CharacterBase
+  
+  # Overwrite
   def screen_x
     (@real_x - $game_map.display_x) * 32 + 16
   end
   
+  # Overwrite
   def screen_y
     (@real_y - $game_map.display_y) * 32 + 32 - shift_y - jump_height
   end
+  
 end
 
 class Game_Player
   
+  # Overwrite
   def move_by_input
     return if !movable? || $game_map.interpreter.running?
     return unless Input.dir4 > 0
