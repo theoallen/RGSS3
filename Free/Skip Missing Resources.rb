@@ -2,7 +2,7 @@
 =begin
 
   Theo - Skip Missing Resources
-  Version : 1.1
+  Version : 1.1b
 
   _(:3JZ)_
   This script allow you to continue to play the game even though the 
@@ -17,7 +17,7 @@ module THEO
   MissingList_FileName = "List"
   # A filename to record what was missing
   
-  ShowMessageBox = true
+  ShowMessageBox = false
   # You want to show a dialogue box where it shows u what is missing?
   
   MissingSound = "Missing sound!"
@@ -38,8 +38,8 @@ class << Audio
       begin
         pre_skip_#{method}_play(filename, *args) 
       rescue 
-        msgbox THEO::MissingSound + \"\n\" + filename unless 
-          Cache.missing_included?(filename) && THEO::ShowMessageBox
+        msgbox THEO::MissingSound + \"\n\" + filename if 
+          THEO::ShowMessageBox && !Cache.missing_included?(filename)  
         Cache.missing_resource_add(filename)
         Cache.write_missing_list
         return
@@ -87,8 +87,8 @@ class Bitmap
     begin 
       pre_skip_init(*args)
     rescue
-      msgbox sprintf(THEO::MissingBitmap + "\n%s",args[0]) unless 
-        Cache.missing_included?(args[0])
+      msgbox sprintf(THEO::MissingBitmap + "\n%s",args[0]) if 
+        THEO::ShowMessageBox && !Cache.missing_included?(args[0])
       Cache.missing_resource_add(args[0])
       Cache.write_missing_list
       pre_skip_init(32,32)
