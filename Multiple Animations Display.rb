@@ -1,8 +1,7 @@
 # =============================================================================
 # TheoAllen - Multiple Animations Display
-# Version : 1.0
-# Contact : www.rpgmakerid.com (or) http://theolized.blogspot.com
-# (English Documentation)
+# Version : 1.1
+# Contact : Discord: @Theo#3034 / Twitter: @theolized
 # -----------------------------------------------------------------------------
 # Requested by : LadyMinerva
 # =============================================================================
@@ -10,6 +9,8 @@
 # =============================================================================
 # Change Logs:
 # -----------------------------------------------------------------------------
+# 2018.12.02 - Added feature to play multiple animations in map consecutively
+#              by using show animation in eventing.
 # 2014.06.25 - Ported from TSBS addons. Now can be used independently
 #            - Got rid some unused codes
 # 2014.06.23 - Multiple animation on animation guard
@@ -76,9 +77,9 @@ module Theo
     # ------------------------------------------------------------------------
   end
 end
-# =============================================================================
+#==============================================================================
 # End Configuration
-# =============================================================================
+#==============================================================================
 class RPG::Animation
   
   def anime_links
@@ -93,9 +94,9 @@ class RPG::Animation
   end
   
 end
-# -----------------------------------------------------------------------------
+#==============================================================================
 # Sprite multiple animation
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class Sprite_MultiAnime < Sprite_Base
   
   def initialize(viewport, ref_sprite, anime, flip = false)
@@ -119,6 +120,7 @@ class Sprite_MultiAnime < Sprite_Base
     self.y = @ref_sprite.y
     self.z = @ref_sprite.z
   end
+  
   # Overwrite animation process timing
   def animation_process_timing(timing)
     timing.se.play unless @ani_duplicated
@@ -135,9 +137,9 @@ class Sprite_MultiAnime < Sprite_Base
   end
   
 end
-# -----------------------------------------------------------------------------
+#==============================================================================
 # Sprite Battler
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class Sprite_Battler
   attr_reader :multianimes
   
@@ -195,9 +197,9 @@ class Sprite_Battler
   end
   
 end
-# -----------------------------------------------------------------------------
+#==============================================================================
 # Sprite Character
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class Sprite_Character
   attr_reader :multianimes
   
@@ -254,4 +256,29 @@ class Sprite_Character
     theo_multianime_update_anim
   end
   
+end
+#==============================================================================
+# Game Character
+#------------------------------------------------------------------------------
+class Game_Character
+  # Overwrite animation_id=
+  def animation_id=(id)
+    @animation_id = id
+    return if id == 0
+    play_animation
+  end
+  
+  def play_animation
+    spr = SceneManager.scene.instance_variable_get("@spriteset")
+    return unless spr
+    spr.find_char(self).start_animation($data_animations[@animation_id])
+  end
+end
+#==============================================================================
+# Spriteset Map
+#------------------------------------------------------------------------------
+class Spriteset_Map
+  def find_char(char)
+    return @character_sprites.find {|spr| spr.character == char}
+  end
 end
