@@ -1,6 +1,6 @@
 #===============================================================================
 # TheoAllen - Insane Anti Lag
-# Version : 1.1
+# Version : 1.1b
 # Language : English
 #-------------------------------------------------------------------------------
 # With help from following people :
@@ -10,14 +10,14 @@
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Contact :
 #-------------------------------------------------------------------------------
-# *> http://www.rpgmakerid.com
-# *> http://www.rpgmakervxace.net
-# *> http://www.theolized.com
+# Discord @ Theo#3034
+# Twiiter @ theolized
 #===============================================================================
 ($imported ||= {})[:Theo_AntiLag] = true
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2018.12.11 - Added extra rescue to prevent crash with Shaz's mouse script
 # 2015.02.20 - Added page check enhancer to work with parallel process
 # 2015.01.25 - Compatibility with Shaz's Mouse Script. def events_xy now should
 #              always return array,
@@ -242,7 +242,7 @@ class MapTable
   # * Get array
   #-----------------------------------------------------------------------------
   def get(x,y)
-    @table[x][y]
+    @table[x][y] rescue []
   end
   
 end
