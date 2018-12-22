@@ -8,5 +8,3 @@ Terms of Use
 * All my scripts in "YEA" folder shared the same ToU as Yanfly's
 * All my scripts are free to edit / Repost of edit as long as you retain the credit to me
 * Credit goes by my name, TheoAllen.
-
-Repository last update: 2018.07.26
