@@ -1,5 +1,5 @@
 #==============================================================================
-# TheoAllen - Tileflag Template
+# TheoAllen - Tileset Passability Referencer
 # Version : 1.0
 # Contact : Discord @ Theo#3034
 #==============================================================================
