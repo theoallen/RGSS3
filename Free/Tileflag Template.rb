@@ -38,9 +38,10 @@
 #==============================================================================
 module AED
   module Tiles
-    List = {}
-    LoadID = [14] # <-- Load these tilesets as template (based on ID)
+    List = {} # <-- Don't touch this
+    LoadID = [1,2,3,4] # <-- Load these tilesets as template (based on ID)
     
+    # Also don't touch anything below this
     tileset = load_data("Data/Tilesets.rvdata2")
     LoadID.each do |id|
       tileset[id].tileset_names.each_with_index do |name, i|
