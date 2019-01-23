@@ -1,12 +1,13 @@
 #==============================================================================
-# TheoAllen - Tileset Passability Referencer
-# Version : 1.0
+# TheoAllen - Tileflag Template
+# Version : 1.0b
 # Contact : Discord @ Theo#3034
 #==============================================================================
 ($imported ||= {})[:Theo_TileflagTemp] = true
 #==============================================================================
 # Change Logs:
 #------------------------------------------------------------------------------
+# 2019.01.23 - Added layered tag
 # 2019.01.13 - Finished script
 #==============================================================================
 =begin
@@ -38,17 +39,16 @@
 #==============================================================================
 module AED
   module Tiles
-    List = {} # <-- Don't touch this
-    LoadID = [1,2,3,4] # <-- Load these tilesets as template (based on ID)
+    List = {}
+    LoadID = [14,15,16,17] # <-- Load these tilesets as template (based on ID)
     
-    # Also don't touch anything below this
     tileset = load_data("Data/Tilesets.rvdata2")
     LoadID.each do |id|
       tileset[id].tileset_names.each_with_index do |name, i|
         next if name.empty?
         List[name] = [id, i]
       end
-    end    
+    end
   end
 end
 #==============================================================================
@@ -127,8 +127,8 @@ class Game_Map
   
   # Reconstruct tile flags
   def flags
-    if !@flags || @flag_id != tileset.id
-      @flag_id = tileset.id
+    if !@flags || @flag_id != @map_id
+      @flag_id = @map_id
       @flags = tileset.flags.clone
       
       # Tile B ~ E settings
@@ -152,6 +152,15 @@ class Game_Map
       end
     end
     return @flags
+  end
+  
+  def layered_tiles_flag?(x, y, bit)
+    layered_tiles(x, y).any? {|tile_id| flags[tile_id] & bit != 0 }
+  end
+  
+  # For convenient sake
+  def data
+    @map.data
   end
   
 end
