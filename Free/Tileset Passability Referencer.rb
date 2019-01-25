@@ -1,12 +1,13 @@
 #==============================================================================
-# TheoAllen - Tileflag Template
-# Version : 1.0b
+# TheoAllen - Tileset Passability Referencer
+# Version : 1.0c
 # Contact : Discord @ Theo#3034
 #==============================================================================
 ($imported ||= {})[:Theo_TileflagTemp] = true
 #==============================================================================
 # Change Logs:
 #------------------------------------------------------------------------------
+# 2019.01.26 - Added terrain tag
 # 2019.01.23 - Added layered tag
 # 2019.01.13 - Finished script
 #==============================================================================
@@ -156,6 +157,15 @@ class Game_Map
   
   def layered_tiles_flag?(x, y, bit)
     layered_tiles(x, y).any? {|tile_id| flags[tile_id] & bit != 0 }
+  end
+  
+  def terrain_tag(x, y)
+    return 0 unless valid?(x, y)
+    layered_tiles(x, y).each do |tile_id|
+      tag = flags[tile_id] >> 12
+      return tag if tag > 0
+    end
+    return 0
   end
   
   # For convenient sake
