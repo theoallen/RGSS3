@@ -24,7 +24,7 @@ class Sprite_Message
     if text =~ /\ef/i
       @float = true
     end
-    if text =~ /\ea\[(.+)\]/i # <-- edited
+    if text =~ /\ea\[[\w\s]+\]/i || text =~ /\ea\[(\{\d+\})]/i# <-- edited
       @actor = $1 if Actors[$1]
     end
     if text =~ /\ee\[(\d+)\]/i
@@ -66,7 +66,11 @@ class Sprite_Message
     when '}'
       make_font_smaller
     when 'A'
-      text.slice!(/^\[.+\]/) # <-- Edited
+      if text =~ /^\[\{(\d+)\}\].+/
+        text.slice!(/\[\{(\d+)\}\]/)
+      else
+        text.slice!(/^\[[\w\s]+\]/)
+      end
     when 'S'
       shake(text.slice!(/^\[\d+\]/)[/\d+/].to_i)
     when 'E'
@@ -146,6 +150,7 @@ class Sprite_Message
   
   # New method (Change the regex here if u dont like it
   def actor_name_replace(string)
+    return "" unless string
     string.gsub(/\{(\d+)\}/) {actor_name($1.to_i)}
   end
 end
