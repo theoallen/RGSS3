@@ -25,7 +25,7 @@
   corner with typing effect
   
   ======================
-  || Cara penggunaan ||
+  || How to use ||
   ----------------------
   Put this script below material but above main
   
