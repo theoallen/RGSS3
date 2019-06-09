@@ -16,7 +16,7 @@
   One of my biggest pet peeve on random encounter is that it doesn't have a
   warning on when I actually get an encounter. Most of the time when I entered
   a battle, it bummed me out. This simple script is simply adding a warning
-  when the you're nearing the encounter
+  when you're nearing the encounter
   
   -----------------------------------------------------------------------------
   > How to use :
