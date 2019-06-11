@@ -1,11 +1,12 @@
 #==============================================================================
 # TheoAllen - Encounter Warning
-# Version : 1.0
+# Version : 1.0b
 #==============================================================================
 ($imported ||= {})[:Theo_EncWarning] = true
 #==============================================================================
 # Change Logs:
 #------------------------------------------------------------------------------
+# 2019.06.12 - Fixed the script call to disable
 # 2019.06.09 - Finished
 #==============================================================================
 =begin
@@ -16,7 +17,7 @@
   One of my biggest pet peeve on random encounter is that it doesn't have a
   warning on when I actually get an encounter. Most of the time when I entered
   a battle, it bummed me out. This simple script is simply adding a warning
-  when you're nearing the encounter
+  when the you're nearing the encounter
   
   -----------------------------------------------------------------------------
   > How to use :
@@ -66,7 +67,8 @@ end
 #==============================================================================
 class Game_System
   def warning
-    @warning = Theo::Enc::ShowAtStart
+    @warning = Theo::Enc::ShowAtStart if @warning.nil?
+    @warning
   end
   attr_writer :warning
 end
@@ -132,7 +134,8 @@ class Game_Player
   alias aed2_update_encounter update_encounter
   def update_encounter
     aed2_update_encounter
-    if Theo::Enc::Exclamation && @encounter_count == Theo::Enc::Exclamation
+    if Theo::Enc::Exclamation && @encounter_count == Theo::Enc::Exclamation &&
+      $game_system.warning
       Theo::Enc::ExclamationSound.play
       self.balloon_id = 1
     end
@@ -158,5 +161,4 @@ class Scene_Map
     aed2_warning_terminate
     @warn.dispose
   end
-  
 end
