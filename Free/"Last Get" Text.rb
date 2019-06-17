@@ -8,7 +8,8 @@
 # Short description:
 #-------------------------------------------------------------------------------
 # If you use \lastget in the message box, it will be replaced with whatever 
-# item you just get it. Works only in event command, not script call
+# item you just get it. Works only if you add/remove item from event command, 
+# not script call
 #-------------------------------------------------------------------------------
 # Configuration:
 #-------------------------------------------------------------------------------
