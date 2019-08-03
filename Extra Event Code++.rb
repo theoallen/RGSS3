@@ -8,9 +8,6 @@
 #
 # <parallel: method_name>
 # Script that will be execute parallel, using method name
-#
-# <create: method_name>
-# Script that will be executed upon creating its sprite
 #===============================================================================
 # ** Game_Event
 #===============================================================================
