@@ -7,7 +7,7 @@
 # Script that will be executed once per event page switch
 #
 # <parallel: method_name>
-# Script that will be execute parallel, using method name
+# Script that will be execute parallel, using the method name
 #===============================================================================
 # ** Game_Event
 #===============================================================================
