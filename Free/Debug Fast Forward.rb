@@ -66,7 +66,7 @@ class Window_Message
     pos = {}
     new_page(text, pos)
     process_character(text.slice!(0, 1), text, pos) until text.empty? ||
-      $force_skip && ($TEST || $BTEST))
+      ($force_skip && ($TEST || $BTEST))
   end
   
 end
