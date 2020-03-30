@@ -2,8 +2,8 @@
 # Show picture, but what is being shown is a text
 #-------------------------------------------------------------------------------
 # Usage (script call): 
-# > $game_map.screen.pictures[ID].show([name],x,y,zoom_x,zoom_y,opacity,0)
-# > $game_map.screen.pictures[ID].show(["Text"],20,30,100,200,255,0)
+# > $game_map.screen.pictures[ID].show([name],(0|1),x,y,zoom_x,zoom_y,opacity,0)
+# > $game_map.screen.pictures[ID].show(["Text"],0,20,30,100,200,255,0)
 #-------------------------------------------------------------------------------
 class Sprite_Picture
   @@bitmap = Bitmap.new(1,1)
