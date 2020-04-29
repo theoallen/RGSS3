@@ -14,6 +14,7 @@
 #
 # More info at: 
 # https://forums.rpgmakerweb.com/index.php?threads/common-event-placeholder.120844/
+#
 # Limitation:
 # > You can not use this to insert a conditional branch event
 #-------------------------------------------------------------------------------
