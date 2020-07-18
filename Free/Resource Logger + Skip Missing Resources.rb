@@ -386,7 +386,7 @@ graphics_res.each do |g|
   rescue
     puts "Missing!"
     missing << g
-    Theo::Reslog.write_missing(g)
+    Theo::ResLog.write_missing(g)
     loading_bar.text1 = "Total Missing Resources : #{missing.size}"
   end
 end
