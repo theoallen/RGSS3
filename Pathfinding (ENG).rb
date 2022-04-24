@@ -451,7 +451,7 @@ class Game_Event
     @path_refresh_count = @path_refresh_rate
     @player_lastpost = [$game_player.x, $game_player.y]
     unless eval(@chase_condition)        
-      goto_character(@target_object, true)
+      goto_character(@target_object, 0, true)
     else
       process_route_end
     end
