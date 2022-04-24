@@ -1,17 +1,19 @@
 #==============================================================================
 # TheoAllen - Pathfinding
-# Version : 1.0b
+# Version : 1.1
 # Language : English
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Contact :
 #------------------------------------------------------------------------------
-# *> http://forums.rpgmakerweb.com
 # *> Discord @ Theo#3034
 #==============================================================================
 ($imported ||= {})[:Theo_Pathfinding] = true
 #===============================================================================
 # Change Logs:
 # ------------------------------------------------------------------------------
+# 2022.04.24 - Added x step away from the target coordinate
+#            - Not setting through for goto_player/goto_character will no longer
+#              freeze the game
 # 2018.07.12 - Fixed a game breaking bug where move route overwriting the 
 #              original move route from event instead of copy and alter it.
 # 2015.01.08 - English translation
@@ -41,11 +43,16 @@
   If path not found, character won't move.
   
   - goto_event(id)
+  - goto_event(id, step_away)
   Use this script call in set move route. Where id is event id
   
   - goto_player
+  - goto_player(step_away)
   Use this script call in set move route to make an event go to the player
   position.
+  
+  Use step away parameter to specify how much x tile(s) away from the target
+  tile
   
   ----------------------
   *) EVENT COMMENT
@@ -225,13 +232,14 @@ end
 #===============================================================================
 
 class Game_Character
+  attr_accessor :through
   attr_reader :move_route
   attr_reader :move_route_index
   #----------------------------------------------------------------------------
   # * Find path (x, y)
   #   Do not set clear to true in move route script
   #----------------------------------------------------------------------------
-  def find_path(tx, ty, clear = false)
+  def find_path(tx, ty, step_away = 0, clear = false)
     return if x == tx && y == ty
     return unless [2,4,6,8].any? {|dir| passable?(tx, ty, dir)}
     last_code = @move_code || []
@@ -252,6 +260,12 @@ class Game_Character
     # breadth first seach iteration
     until @queue.empty?
       bfsearch(@queue.shift)
+    end
+    
+    if @move_code
+      step_away.times do
+        @move_code.shift
+      end
     end
     
     # Execute move code
@@ -315,23 +329,26 @@ class Game_Character
   #----------------------------------------------------------------------------
   # * Chase character
   #----------------------------------------------------------------------------
-  def goto_character(char, clear = false)
+  def goto_character(char, step_away = 0, clear = false)
     return unless char
-    find_path(char.x, char.y, clear)
+    last_through = char.through
+    char.through = true
+    find_path(char.x, char.y, step_away, clear)
+    char.through = last_through
   end
   
   #----------------------------------------------------------------------------
   # * Chase player
   #----------------------------------------------------------------------------
-  def goto_player(clear = false)
-    goto_character($game_player, clear)
+  def goto_player(step_away = 0, clear = false)
+    goto_character($game_player, step_away, clear)
   end
   
   #----------------------------------------------------------------------------
   # * Chase event
   #----------------------------------------------------------------------------
-  def goto_event(id, clear = false)
-    goto_character($game_map.events[id], clear)
+  def goto_event(id, step_away = 0, clear = false)
+    goto_character($game_map.events[id], step_away, clear)
   end
   
   #----------------------------------------------------------------------------
