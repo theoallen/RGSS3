@@ -264,7 +264,7 @@ class Game_Character
     
     if @move_code
       step_away.times do
-        @move_code.shift
+        @move_code.pop
       end
     end
     
