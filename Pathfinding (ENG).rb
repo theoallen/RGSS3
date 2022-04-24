@@ -280,14 +280,13 @@ class Game_Character
       force_move_route(route)
     elsif @move_code
       mv_list = @move_route.list.clone
-      insert_index = @move_route_index 
+      insert_index = @move_route_index + 1
       @move_code.each do |li|
         mv_list.insert(insert_index, li)
         insert_index += 1
       end
       @move_route = copy(@move_route)
       @move_route.list = mv_list
-      @move_route_index -= 1 
     end
     @target_findx = @target_findy = nil
   end
