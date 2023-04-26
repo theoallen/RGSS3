@@ -161,6 +161,7 @@ class Game_Actor
     :luk => [:param_base,7],
     
   # Extra Parameters  
+    :hit => [:xparam,0],
     :eva => [:xparam,1],
     :cri => [:xparam,2],
     :cev => [:xparam,3],
@@ -185,7 +186,7 @@ class Game_Actor
   }
   
   Param_Indexes = {
-    0 => [:mhp, :tgr],
+    0 => [:mhp, :hit, :tgr],
     1 => [:mmp, :grd, :eva],
     2 => [:atk, :rec, :cri],
     3 => [:def, :pha, :cev],
