@@ -209,10 +209,10 @@ class Game_Map
       width.times do |w|
         height.times do |h|
           if (data[w,h,0] - 2048) / 48 == Theo::MapGen::WaterTileID  
-            data[w,h,1] = AutoTile.new(w,h,data[w,h,0],data,0).sub_id + 2048 +
+            data[w,h,0] = AutoTile.new(w,h,data[w,h,0],data,0).sub_id + 2048 +
               48*Theo::MapGen::WaterTileID
           elsif (data[w,h,0] - 2048) / 48 == Theo::MapGen::LandTileID  
-            data[w,h,1] = AutoTile.new(w,h,data[w,h,0],data,0).sub_id + 2048 +
+            data[w,h,0] = AutoTile.new(w,h,data[w,h,0],data,0).sub_id + 2048 +
               48*Theo::MapGen::LandTileID
           end
         end
